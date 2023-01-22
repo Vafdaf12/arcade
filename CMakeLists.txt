@@ -15,7 +15,7 @@ FetchContent_MakeAvailable(SDL2)
 
 # ------------ CONFIGURE ARCADE -------------------
 file(GLOB SRCFILES
-    src/**/*.cpp 
+    src/graphics/*.cpp
     src/*.cpp
 )
 

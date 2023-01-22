@@ -1,7 +1,9 @@
 #include "SDL_error.h"
 #include "SDL_events.h"
+#include "SDL_pixels.h"
 #include "SDL_surface.h"
 #include "SDL_video.h"
+#include "graphics/Color.h"
 #include <SDL.h>
 #include <iostream>
 
@@ -31,10 +33,13 @@ int main() {
     }
 
     SDL_Surface* pWindowSurface = SDL_GetWindowSurface(pWindow);
+    SDL_PixelFormat* pPixelFormat = pWindowSurface->format;
 
-    uint32_t color = 0xFF0000;
+    Color::SetColorFormat(pPixelFormat);
 
-    SetPixel(pWindowSurface, color, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+    std::cout << "Window pixel format: " << SDL_GetPixelFormatName(pPixelFormat->format) << "\n";
+
+    SetPixel(pWindowSurface, Color::Orange(), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
     SDL_UpdateWindowSurface(pWindow);
 
     SDL_Event event;
