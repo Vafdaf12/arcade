@@ -21,6 +21,8 @@ public:
     void Clear(const Color& c = Color::Black());
     void SetPixel(const Color& color, int x, int y);
 
+    inline operator bool() const { return m_pSurface; }
+
 private:
     SDL_Surface* m_pSurface;
 
