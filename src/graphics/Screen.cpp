@@ -1,7 +1,6 @@
 #include "Screen.h"
 
 #include <SDL.h>
-
 #include <cassert>
 
 Screen::Screen()
@@ -34,11 +33,11 @@ SDL_Window* Screen::init(uint32_t w, uint32_t h, uint32_t mag) {
         m_pSurface = SDL_GetWindowSurface(m_pWindow);
         SDL_PixelFormat* pPixelFormat = m_pSurface->format;
 
-        Color::SetColorFormat(pPixelFormat);
+        Color::setColorFormat(pPixelFormat);
         m_clearColor = Color::Black();
 
-        m_backBuffer.Init(pPixelFormat->format, m_width, m_height);
-        m_backBuffer.Clear(m_clearColor);
+        m_backBuffer.init(pPixelFormat->format, m_width, m_height);
+        m_backBuffer.clear(m_clearColor);
     }
     return m_pWindow;
 }
@@ -48,22 +47,22 @@ void Screen::swapBuffers() {
 
     clearScreen();
 
-    SDL_BlitScaled(m_backBuffer.GetSurface(), nullptr, m_pSurface, nullptr);
+    SDL_BlitScaled(m_backBuffer.getSurface(), nullptr, m_pSurface, nullptr);
     SDL_UpdateWindowSurface(m_pWindow);
 
-    m_backBuffer.Clear(m_clearColor);
+    m_backBuffer.clear(m_clearColor);
 }
 
 void Screen::draw(int x, int y, const Color& color) {
     assert(m_backBuffer);
-    m_backBuffer.SetPixel(color, x, y);
+    m_backBuffer.setPixel(color, x, y);
 }
 void Screen::draw(const Vector2& p, const Color& color) {
     assert(m_backBuffer);
-    m_backBuffer.SetPixel(color, p.x, p.y);
+    m_backBuffer.setPixel(color, p.x, p.y);
 }
 
 void Screen::clearScreen() {
     assert(m_pWindow);
-    SDL_FillRect(m_pSurface, nullptr, m_clearColor.GetColor());
+    SDL_FillRect(m_pSurface, nullptr, m_clearColor.getColor());
 }

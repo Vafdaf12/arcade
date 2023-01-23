@@ -38,12 +38,12 @@ ScreenBuffer& ScreenBuffer::operator=(const ScreenBuffer& other) {
     return *this;
 }
 
-void ScreenBuffer::Init(uint32_t format, uint32_t width, uint32_t height) {
+void ScreenBuffer::init(uint32_t format, uint32_t width, uint32_t height) {
     m_pSurface = SDL_CreateRGBSurfaceWithFormat(0, width, height, 0, format);
-    Clear();
+    clear();
 }
 
-void ScreenBuffer::SetPixel(const Color& color, int x, int y) {
+void ScreenBuffer::setPixel(const Color& color, int x, int y) {
     ASSERT_GUARD(m_pSurface, return)
     if (y >= m_pSurface->h || y < 0) return;
     if (x >= m_pSurface->w || x < 0) return;
@@ -51,18 +51,18 @@ void ScreenBuffer::SetPixel(const Color& color, int x, int y) {
     SDL_LockSurface(m_pSurface);
 
     uint32_t* pixels = static_cast<uint32_t*>(m_pSurface->pixels);
-    size_t i = GetIndex(y, x);
-    pixels[i] = color.GetColor();
+    size_t i = index(y, x);
+    pixels[i] = color.getColor();
 
     SDL_UnlockSurface(m_pSurface);
 }
-void ScreenBuffer::Clear(const Color& c) {
+void ScreenBuffer::clear(const Color& c) {
     ASSERT_GUARD(m_pSurface, return)
 
-    SDL_FillRect(m_pSurface, nullptr, c.GetColor());
+    SDL_FillRect(m_pSurface, nullptr, c.getColor());
 }
 
-size_t ScreenBuffer::GetIndex(int r, int c) const {
+size_t ScreenBuffer::index(int r, int c) const {
     ASSERT_GUARD(m_pSurface, return 0)
 
     return r * m_pSurface->w + c;
