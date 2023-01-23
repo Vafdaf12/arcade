@@ -35,12 +35,15 @@ int main() {
     Color::SetColorFormat(pPixelFormat);
 
     ScreenBuffer screenBuffer;
-    screenBuffer.Init(pPixelFormat->format, pWindowSurface->w, pWindowSurface->h);
+    screenBuffer.Init(
+        pPixelFormat->format, pWindowSurface->w, pWindowSurface->h);
 
-    std::cout << "Window pixel format: " << SDL_GetPixelFormatName(pPixelFormat->format) << "\n";
+    std::cout << "Window pixel format: "
+              << SDL_GetPixelFormatName(pPixelFormat->format) << "\n";
 
     screenBuffer.SetPixel(Color::Orange(), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-    SDL_BlitSurface(screenBuffer.GetSurface(), nullptr, pWindowSurface, nullptr);
+    SDL_BlitSurface(
+        screenBuffer.GetSurface(), nullptr, pWindowSurface, nullptr);
     SDL_UpdateWindowSurface(pWindow);
 
     SDL_Event event;

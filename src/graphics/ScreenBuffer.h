@@ -21,7 +21,6 @@ public:
     void Clear(const Color& c = Color::Black());
     void SetPixel(const Color& color, int x, int y);
 
-
 private:
     SDL_Surface* m_pSurface;
 

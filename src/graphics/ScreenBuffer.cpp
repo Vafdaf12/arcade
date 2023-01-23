@@ -3,8 +3,9 @@
 
 #include <cassert>
 
-
-#define ASSERT_GUARD(cond, body) assert(cond); if(!(cond)) body;
+#define ASSERT_GUARD(cond, body)                                               \
+    assert(cond);                                                              \
+    if (!(cond)) body;
 
 ScreenBuffer::ScreenBuffer() : m_pSurface{nullptr} {}
 ScreenBuffer::ScreenBuffer(const ScreenBuffer& buf) : ScreenBuffer() {
@@ -44,8 +45,8 @@ void ScreenBuffer::Init(uint32_t format, uint32_t width, uint32_t height) {
 
 void ScreenBuffer::SetPixel(const Color& color, int x, int y) {
     ASSERT_GUARD(m_pSurface, return)
-    if(y >= m_pSurface->h || y < 0) return;
-    if(x >= m_pSurface->w || x < 0) return;
+    if (y >= m_pSurface->h || y < 0) return;
+    if (x >= m_pSurface->w || x < 0) return;
 
     SDL_LockSurface(m_pSurface);
 
