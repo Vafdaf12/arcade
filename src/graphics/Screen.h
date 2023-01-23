@@ -1,13 +1,16 @@
 #pragma once
 
-#include "../util/Vector2.h"
 #include "Color.h"
 #include "ScreenBuffer.h"
 
 #include <stdint.h>
 
+class Vector2;
+class Line2D;
+
 struct SDL_Window;
 struct SDL_Surface;
+struct SDL_Renderer;
 
 class Screen {
 public:

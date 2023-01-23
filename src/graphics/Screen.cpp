@@ -1,4 +1,5 @@
 #include "Screen.h"
+#include "../util/Vector2.h"
 
 #include <SDL.h>
 #include <cassert>
