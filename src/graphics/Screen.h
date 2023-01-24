@@ -31,6 +31,7 @@ public:
 
     void draw(int x, int y, const Color& color);
     void draw(const Vector2& p, const Color& color);
+    void draw(const Line2D& line, const Color& color);
 
 private:
     Screen(const Screen&) = delete;
@@ -42,6 +43,7 @@ private:
 
     SDL_Window* m_pWindow;
     SDL_Surface* m_pSurface;
+    SDL_Renderer* m_pRenderer;
 
     ScreenBuffer m_backBuffer;
     Color m_clearColor;
