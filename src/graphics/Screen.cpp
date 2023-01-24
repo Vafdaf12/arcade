@@ -1,9 +1,12 @@
 #include "Screen.h"
 #include "../shapes/Line2D.h"
 #include "../util/Vector2.h"
+#include "SDL_render.h"
 
 #include <SDL.h>
+#include <algorithm>
 #include <cassert>
+#include <vector>
 
 Screen::Screen()
     : m_width(0), m_height(0), m_pWindow(nullptr), m_pSurface(nullptr),
@@ -78,6 +81,24 @@ void Screen::draw(const Line2D& line, const Color& color) {
     SDL_SetRenderDrawColor(
         m_pRenderer, color.red(), color.green(), color.blue(), color.alpha());
     SDL_RenderDrawLine(m_pRenderer, v0.x, v0.y, v1.x, v1.y);
+}
+
+SDL_Point toPoint(const Vector2& p) {
+    return { static_cast<int>(p.x), static_cast<int>(p.y) };
+}
+
+void Screen::draw(const Shape& shape, const Color& color) {
+    assert(m_pRenderer);
+
+    std::vector<Vector2> shapePoints = shape.getPoints();
+    std::vector<SDL_Point> points(shape.getPoints().size());
+
+    std::transform(shapePoints.begin(), shapePoints.end(), points.begin(), toPoint);
+    points.push_back(points[0]);
+
+    SDL_SetRenderDrawColor(
+        m_pRenderer, color.red(), color.green(), color.blue(), color.alpha());
+    SDL_RenderDrawLines(m_pRenderer, points.data(), points.size());
 }
 
 void Screen::clearScreen() {

@@ -2,6 +2,7 @@
 
 #include "Color.h"
 #include "ScreenBuffer.h"
+#include "../shapes/Shape.h"
 
 #include <stdint.h>
 
@@ -32,6 +33,7 @@ public:
     void draw(int x, int y, const Color& color);
     void draw(const Vector2& p, const Color& color);
     void draw(const Line2D& line, const Color& color);
+    void draw(const Shape& shape, const Color& color);
 
 private:
     Screen(const Screen&) = delete;
