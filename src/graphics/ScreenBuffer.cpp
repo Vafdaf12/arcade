@@ -5,7 +5,7 @@
 
 #define ASSERT_GUARD(cond, body)                                               \
     assert(cond);                                                              \
-    if (!(cond)) body;
+    if (!(cond)) body
 
 ScreenBuffer::ScreenBuffer() : m_pSurface{nullptr} {}
 ScreenBuffer::ScreenBuffer(const ScreenBuffer& buf) : ScreenBuffer() {
@@ -44,7 +44,8 @@ void ScreenBuffer::init(uint32_t format, uint32_t width, uint32_t height) {
 }
 
 void ScreenBuffer::setPixel(const Color& color, int x, int y) {
-    ASSERT_GUARD(m_pSurface, return)
+    ASSERT_GUARD(m_pSurface, { return; })
+
     if (y >= m_pSurface->h || y < 0) return;
     if (x >= m_pSurface->w || x < 0) return;
 
@@ -57,13 +58,13 @@ void ScreenBuffer::setPixel(const Color& color, int x, int y) {
     SDL_UnlockSurface(m_pSurface);
 }
 void ScreenBuffer::clear(const Color& c) {
-    ASSERT_GUARD(m_pSurface, return)
+    ASSERT_GUARD(m_pSurface, { return; })
 
     SDL_FillRect(m_pSurface, nullptr, c.getColor());
 }
 
 size_t ScreenBuffer::index(int r, int c) const {
-    ASSERT_GUARD(m_pSurface, return 0)
+    ASSERT_GUARD(m_pSurface, { return 0; })
 
     return r * m_pSurface->w + c;
 }
