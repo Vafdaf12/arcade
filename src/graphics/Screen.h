@@ -45,7 +45,6 @@ private:
 
     SDL_Window* m_pWindow;
     SDL_Surface* m_pSurface;
-    SDL_Renderer* m_pRenderer;
 
     ScreenBuffer m_backBuffer;
     Color m_clearColor;

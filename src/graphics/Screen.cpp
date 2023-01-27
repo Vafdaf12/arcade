@@ -6,18 +6,14 @@
 #include <SDL.h>
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 #include <vector>
 
 Screen::Screen()
-    : m_width(0), m_height(0), m_pWindow(nullptr), m_pSurface(nullptr),
-      m_pRenderer(nullptr) {}
+    : m_width(0), m_height(0), m_pWindow(nullptr), m_pSurface(nullptr) {}
 
 Screen::~Screen() {
-    if (m_pWindow) {
-        SDL_DestroyWindow(m_pWindow);
-        SDL_DestroyRenderer(m_pRenderer);
-        m_pWindow = nullptr;
-    }
+    if (m_pWindow) SDL_DestroyWindow(m_pWindow);
     SDL_Quit();
 }
 
@@ -45,8 +41,6 @@ SDL_Window* Screen::init(uint32_t w, uint32_t h, uint32_t mag) {
 
         m_backBuffer.init(pPixelFormat->format, m_width, m_height);
         m_backBuffer.clear(m_clearColor);
-
-        m_pRenderer = SDL_CreateSoftwareRenderer(m_backBuffer.getSurface());
     }
     return m_pWindow;
 }
@@ -63,42 +57,70 @@ void Screen::swapBuffers() {
 }
 
 void Screen::draw(int x, int y, const Color& color) {
-    assert(m_pRenderer);
-    SDL_SetRenderDrawColor(
-        m_pRenderer, color.red(), color.green(), color.blue(), color.alpha());
-    SDL_RenderDrawPoint(m_pRenderer, x, y);
+    assert(m_backBuffer);
+    m_backBuffer.setPixel(color, x, y);
 }
 void Screen::draw(const Vector2& p, const Color& color) {
-    assert(m_pRenderer);
-    SDL_SetRenderDrawColor(
-        m_pRenderer, color.red(), color.green(), color.blue(), color.alpha());
-    SDL_RenderDrawPoint(m_pRenderer, p.x, p.y);
+    assert(m_backBuffer);
+    m_backBuffer.setPixel(color, p.x, p.y);
 }
 void Screen::draw(const Line2D& line, const Color& color) {
-    assert(m_pRenderer);
-    auto v0 = line.v0();
-    auto v1 = line.v1();
-    SDL_SetRenderDrawColor(
-        m_pRenderer, color.red(), color.green(), color.blue(), color.alpha());
-    SDL_RenderDrawLine(m_pRenderer, v0.x, v0.y, v1.x, v1.y);
-}
+    assert(m_backBuffer);
 
-SDL_Point toPoint(const Vector2& p) {
-    return { static_cast<int>(p.x), static_cast<int>(p.y) };
+    int dx, dy;
+
+    int x0 = std::roundf(line.v0().x);
+    int y0 = std::roundf(line.v0().y);
+
+    int x1 = std::roundf(line.v1().x);
+    int y1 = std::roundf(line.v1().y);
+
+    dx = x1 - x0;
+    dy = y1 - y0;
+
+    const char ix((dx > 0) - (dx < 0));
+    const char iy((dy > 0) - (dy < 0));
+
+    dx = std::abs(dx);
+    dy = std::abs(dy);
+
+    m_backBuffer.setPixel(color, x0, y0);
+    if (dx >= dy) {
+        int p = 2 * dy - dx;
+
+        while(x0 != x1) {
+            if (p >= 0) {
+                y0 += iy;
+                p -= 2 * dx;
+            }
+            p += 2 * dy;
+            x0 += ix;
+
+            m_backBuffer.setPixel(color, x0, y0);
+        }
+    }
+    else {
+        int p = 2 * dx - dy;
+
+        while(y0 != y1) {
+            if (p >= 0) {
+                x0 += ix;
+                p -= 2 * dy;
+            }
+            p += 2 * dx;
+            y0 += iy;
+
+            m_backBuffer.setPixel(color, x0, y0);
+        }
+    }
 }
 
 void Screen::draw(const Shape& shape, const Color& color) {
-    assert(m_pRenderer);
-
-    std::vector<Vector2> shapePoints = shape.getPoints();
-    std::vector<SDL_Point> points(shape.getPoints().size());
-
-    std::transform(shapePoints.begin(), shapePoints.end(), points.begin(), toPoint);
+    std::vector<Vector2> points = shape.getPoints();
     points.push_back(points[0]);
-
-    SDL_SetRenderDrawColor(
-        m_pRenderer, color.red(), color.green(), color.blue(), color.alpha());
-    SDL_RenderDrawLines(m_pRenderer, points.data(), points.size());
+    for (size_t i = 0; i < points.size() - 1; i++) {
+        draw({points[i], points[i + 1]}, color);
+    }
 }
 
 void Screen::clearScreen() {
