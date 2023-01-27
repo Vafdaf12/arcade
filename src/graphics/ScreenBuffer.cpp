@@ -3,12 +3,13 @@
 
 #include <cassert>
 #include <iostream>
+#include <utility>
 
 #define ASSERT_GUARD(cond, body)                                               \
     assert(cond);                                                              \
     if (!(cond)) body
 
-ScreenBuffer::ScreenBuffer() : m_pSurface{nullptr} {}
+ScreenBuffer::ScreenBuffer() : m_pSurface(nullptr) {}
 ScreenBuffer::ScreenBuffer(const ScreenBuffer& buf) : ScreenBuffer() {
     if (!buf.m_pSurface) return;
 
@@ -16,27 +17,33 @@ ScreenBuffer::ScreenBuffer(const ScreenBuffer& buf) : ScreenBuffer() {
         0, buf.m_pSurface->w, buf.m_pSurface->h, 0, m_pSurface->format->format);
     SDL_BlitSurface(buf.m_pSurface, nullptr, m_pSurface, nullptr);
 }
-ScreenBuffer::~ScreenBuffer() {
-    if (m_pSurface) SDL_FreeSurface(m_pSurface);
+ScreenBuffer::ScreenBuffer(ScreenBuffer&& buf) {
+    std::swap(buf.m_pSurface, m_pSurface);
 }
-
-ScreenBuffer& ScreenBuffer::operator=(const ScreenBuffer& other) {
-    if (this == &other) return *this;
+ScreenBuffer& ScreenBuffer::operator=(const ScreenBuffer& buf) {
+    if (this == &buf) return *this;
 
     // Free pre-existing surface
     if (m_pSurface) SDL_FreeSurface(m_pSurface);
     m_pSurface = nullptr;
 
-    if (other.m_pSurface) {
+    if (buf.m_pSurface) {
         m_pSurface = SDL_CreateRGBSurfaceWithFormat(0,
-            other.m_pSurface->w,
-            other.m_pSurface->h,
+            buf.m_pSurface->w,
+            buf.m_pSurface->h,
             0,
             m_pSurface->format->format);
-        SDL_BlitSurface(other.m_pSurface, nullptr, m_pSurface, nullptr);
+        SDL_BlitSurface(buf.m_pSurface, nullptr, m_pSurface, nullptr);
     }
 
     return *this;
+}
+ScreenBuffer& ScreenBuffer::operator=(ScreenBuffer&& buf) {
+    std::swap(buf.m_pSurface, m_pSurface);
+    return *this;
+}
+ScreenBuffer::~ScreenBuffer() {
+    if (m_pSurface) SDL_FreeSurface(m_pSurface);
 }
 
 void ScreenBuffer::init(uint32_t format, uint32_t width, uint32_t height) {

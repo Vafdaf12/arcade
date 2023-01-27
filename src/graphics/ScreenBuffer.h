@@ -10,9 +10,10 @@ class ScreenBuffer {
 public:
     ScreenBuffer();
     ScreenBuffer(const ScreenBuffer& buf);
+    ScreenBuffer(ScreenBuffer&& buf);
+    ScreenBuffer& operator=(const ScreenBuffer& buf);
+    ScreenBuffer& operator=(ScreenBuffer&& buf);
     ~ScreenBuffer();
-
-    ScreenBuffer& operator=(const ScreenBuffer& other);
 
     void init(uint32_t format, uint32_t width, uint32_t height);
 
