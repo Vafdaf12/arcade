@@ -1,8 +1,8 @@
 #pragma once
 
+#include "../shapes/Shape.h"
 #include "Color.h"
 #include "ScreenBuffer.h"
-#include "../shapes/Shape.h"
 
 #include <stdint.h>
 
@@ -33,13 +33,17 @@ public:
     void draw(int x, int y, const Color& color);
     void draw(const Vector2& p, const Color& color);
     void draw(const Line2D& line, const Color& color);
-    void draw(const Shape& shape, const Color& color);
+    void draw(const Shape& shape,
+        const Color& color,
+        bool fill = false,
+        const Color& fillColor = Color::White());
 
 private:
     Screen(const Screen&) = delete;
     Screen& operator=(const Screen&) = delete;
 
     void clearScreen();
+    void polyFill(const std::vector<Vector2>& points, const Color& color);
 
     uint32_t m_width, m_height;
 

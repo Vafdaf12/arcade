@@ -88,7 +88,7 @@ void Screen::draw(const Line2D& line, const Color& color) {
     if (dx >= dy) {
         int p = 2 * dy - dx;
 
-        while(x0 != x1) {
+        while (x0 != x1) {
             if (p >= 0) {
                 y0 += iy;
                 p -= 2 * dx;
@@ -98,11 +98,10 @@ void Screen::draw(const Line2D& line, const Color& color) {
 
             m_backBuffer.setPixel(color, x0, y0);
         }
-    }
-    else {
+    } else {
         int p = 2 * dx - dy;
 
-        while(y0 != y1) {
+        while (y0 != y1) {
             if (p >= 0) {
                 x0 += ix;
                 p -= 2 * dy;
@@ -115,11 +114,64 @@ void Screen::draw(const Line2D& line, const Color& color) {
     }
 }
 
-void Screen::draw(const Shape& shape, const Color& color) {
+void Screen::draw(
+    const Shape& shape, const Color& color, bool fill, const Color& fillColor) {
+
+    if(fill) polyFill(shape.getPoints(), fillColor);
+
     std::vector<Vector2> points = shape.getPoints();
     points.push_back(points[0]);
     for (size_t i = 0; i < points.size() - 1; i++) {
         draw({points[i], points[i + 1]}, color);
+    }
+}
+
+void Screen::polyFill(const std::vector<Vector2>& points, const Color& color) {
+    if (points.size() == 0) return;
+
+    float top = points[0].y;
+    float bottom = points[0].y;
+
+    // Find bounding box of polygon
+    for (size_t i = 1; i < points.size(); i++) {
+        if (points[i].y < top) top = points[i].y;
+        if (points[i].y > bottom) bottom = points[i].y;
+    }
+
+    // Scan through polygon
+    for (int y = top; y < bottom; y++) {
+        std::vector<float> intersections;
+
+        // Find intersection points
+        for (size_t i = 0; i < points.size(); i++) {
+            size_t j = (i + 1) % points.size();
+
+            auto yj = points[j].y;
+            auto yi = points[i].y;
+
+            if (y < std::min(yj, yi)) continue;
+            if (y > std::max(yj, yi)) continue;
+
+            float denom = yi - yj;
+            if (isEqual(denom, 0)) continue;
+
+            float t = (y - yj) / denom;
+            float x = points[j].x * (1 - t) + points[i].x * t;
+
+            intersections.push_back(x);
+        }
+
+        std::sort(intersections.begin(), intersections.end(), std::less<>());
+
+        // Draw all polygon pixels
+        for (size_t i = 0; i < intersections.size() - 1; i += 2) {
+            float x1 = std::ceil(intersections[i]);
+            float x2 = std::ceil(intersections[i + 1]);
+
+            for (int x = x1; x < x2; x++) {
+                draw(x, y, color);
+            }
+        }
     }
 }
 

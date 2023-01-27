@@ -26,7 +26,7 @@ int main() {
     screen.draw(triangle, Color::Cyan());
 
     Circle circle({100, 100}, 30);
-    screen.draw(circle, Color::Red());
+    screen.draw(circle, Color::Cyan(), true, Color::Blue());
 
     AARectangle rect({100, 20}, 30, 20);
     screen.draw(rect, Color::Green());
