@@ -36,8 +36,7 @@ SDL_Window* Screen::init(uint32_t w, uint32_t h, uint32_t mag) {
         m_pSurface = SDL_GetWindowSurface(m_pWindow);
         SDL_PixelFormat* pPixelFormat = m_pSurface->format;
 
-        Color::setColorFormat(pPixelFormat);
-        m_clearColor = Color::Black();
+        m_clearColor = Color::BLACK;
 
         m_backBuffer.init(pPixelFormat->format, m_width, m_height);
         m_backBuffer.clear(m_clearColor);
@@ -177,5 +176,5 @@ void Screen::polyFill(const std::vector<Vector2>& points, const Color& color) {
 
 void Screen::clearScreen() {
     assert(m_pWindow);
-    SDL_FillRect(m_pSurface, nullptr, m_clearColor.getColor());
+    SDL_FillRect(m_pSurface, nullptr, m_clearColor.mapToFormat(m_pSurface->format));
 }

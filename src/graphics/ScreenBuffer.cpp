@@ -55,15 +55,15 @@ void ScreenBuffer::setPixel(const Color& color, int x, int y) {
     uint32_t* pixels = static_cast<uint32_t*>(m_pSurface->pixels);
     size_t i = index(y, x);
 
-    Color dest(pixels[i]);
-    pixels[i] = Color::blendColors(color, dest).getColor();
+    Color dest(pixels[i], m_pSurface->format);
+    pixels[i] = Color::blendColors(color, dest).mapToFormat(m_pSurface->format);
 
     SDL_UnlockSurface(m_pSurface);
 }
 void ScreenBuffer::clear(const Color& c) {
     ASSERT_GUARD(m_pSurface, { return; })
 
-    SDL_FillRect(m_pSurface, nullptr, c.getColor());
+    SDL_FillRect(m_pSurface, nullptr, c.mapToFormat(m_pSurface->format));
 }
 
 size_t ScreenBuffer::index(int r, int c) const {

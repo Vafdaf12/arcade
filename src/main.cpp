@@ -17,21 +17,21 @@ int main() {
     Screen screen;
     screen.init(SCREEN_WIDTH, SCREEN_HEIGHT, MAGNIFICATION);
 
-    screen.draw(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, Color::Orange());
+    screen.draw(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, Color::ORANGE);
 
     Line2D line({0, 0}, {SCREEN_WIDTH, SCREEN_HEIGHT});
-    screen.draw(line, Color::White());
+    screen.draw(line, Color::WHITE);
 
     Triangle triangle({2, 2}, {50, 30}, {20, 60});
-    screen.draw(triangle, Color::Cyan());
+    screen.draw(triangle, Color::CYAN);
 
     AARectangle rect({50, 50}, {100, 100});
-    screen.draw(rect, Color::Red());
+    screen.draw(rect, Color::RED);
 
-    Color color = Color::Blue();
-    color.setAlpha(128);
+    Color color = Color::BLUE;
+    color.alpha = 128;
     Circle circle({100, 100}, 30);
-    screen.draw(circle, Color::Cyan(), true, color);
+    screen.draw(circle, Color::CYAN, true, color);
 
 
     screen.swapBuffers();

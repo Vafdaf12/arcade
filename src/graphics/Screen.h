@@ -36,7 +36,7 @@ public:
     void draw(const Shape& shape,
         const Color& color,
         bool fill = false,
-        const Color& fillColor = Color::White());
+        const Color& fillColor = Color::WHITE);
 
 private:
     Screen(const Screen&) = delete;

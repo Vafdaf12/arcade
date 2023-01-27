@@ -18,7 +18,7 @@ public:
 
     inline SDL_Surface* getSurface() { return m_pSurface; }
 
-    void clear(const Color& c = Color::Black());
+    void clear(const Color& c = Color::BLACK);
     void setPixel(const Color& color, int x, int y);
 
     inline operator bool() const { return m_pSurface; }
