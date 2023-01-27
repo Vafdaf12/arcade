@@ -6,56 +6,42 @@ void Color::setColorFormat(const SDL_PixelFormat* pFormat) {
     s_pFormat = pFormat;
 }
 
+Color Color::blendColors(const Color& src, const Color& dst) {
+    uint8_t alpha = src.alpha();
+
+    float srcAlpha = float(alpha) / 255.0f;
+    float dstAlpha = 1.0f - srcAlpha;
+
+    Color out;
+    out.setAlpha(255);
+    out.setRed(float(src.red()) * srcAlpha + dst.red() * dstAlpha);
+    out.setGreen(float(src.green()) * srcAlpha + dst.green() * dstAlpha);
+    out.setBlue(float(src.blue()) * srcAlpha + dst.blue() * dstAlpha);
+
+    return out;
+}
 Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     SetRGBA(r, g, b, a);
 }
 
 void Color::SetRGBA(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-    m_color = SDL_MapRGBA(s_pFormat, r, g, b, a);
+    m_red = r;
+    m_green = g;
+    m_blue = b;
+    m_alpha = a;
 }
 
-void Color::setRed(uint8_t red) {
-    uint8_t r, g, b, a;
-
-    SDL_GetRGBA(m_color, s_pFormat, &r, &g, &b, &a);
-    SetRGBA(red, g, b, a);
+bool Color::operator==(const Color& c) const {
+    if (m_red != c.m_red) return false;
+    if (m_green != c.m_green) return false;
+    if (m_blue != c.m_blue) return false;
+    if (m_alpha != c.m_alpha) return false;
+    return true;
 }
-void Color::setGreen(uint8_t green) {
-    uint8_t r, g, b, a;
-
-    SDL_GetRGBA(m_color, s_pFormat, &r, &g, &b, &a);
-    SetRGBA(r, green, b, a);
-}
-void Color::setBlue(uint8_t blue) {
-    uint8_t r, g, b, a;
-
-    SDL_GetRGBA(m_color, s_pFormat, &r, &g, &b, &a);
-    SetRGBA(r, g, blue, a);
-}
-void Color::setAlpha(uint8_t alpha) {
-    uint8_t r, g, b, a;
-
-    SDL_GetRGBA(m_color, s_pFormat, &r, &g, &b, &a);
-    SetRGBA(r, g, b, alpha);
+uint32_t Color::getColor() const {
+    return SDL_MapRGBA(s_pFormat, m_red, m_green, m_blue, m_alpha);
 }
 
-uint8_t Color::red() const {
-    uint8_t r, g, b, a;
-    SDL_GetRGBA(m_color, s_pFormat, &r, &g, &b, &a);
-    return r;
-}
-uint8_t Color::green() const {
-    uint8_t r, g, b, a;
-    SDL_GetRGBA(m_color, s_pFormat, &r, &g, &b, &a);
-    return g;
-}
-uint8_t Color::blue() const {
-    uint8_t r, g, b, a;
-    SDL_GetRGBA(m_color, s_pFormat, &r, &g, &b, &a);
-    return b;
-}
-uint8_t Color::alpha() const {
-    uint8_t r, g, b, a;
-    SDL_GetRGBA(m_color, s_pFormat, &r, &g, &b, &a);
-    return a;
+Color::Color(uint32_t color) {
+    SDL_GetRGBA(color, s_pFormat, &m_red, &m_green, &m_blue, &m_alpha);
 }

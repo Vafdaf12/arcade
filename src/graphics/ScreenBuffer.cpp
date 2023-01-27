@@ -2,6 +2,7 @@
 #include "SDL_surface.h"
 
 #include <cassert>
+#include <iostream>
 
 #define ASSERT_GUARD(cond, body)                                               \
     assert(cond);                                                              \
@@ -53,7 +54,9 @@ void ScreenBuffer::setPixel(const Color& color, int x, int y) {
 
     uint32_t* pixels = static_cast<uint32_t*>(m_pSurface->pixels);
     size_t i = index(y, x);
-    pixels[i] = color.getColor();
+
+    Color dest(pixels[i]);
+    pixels[i] = Color::blendColors(color, dest).getColor();
 
     SDL_UnlockSurface(m_pSurface);
 }

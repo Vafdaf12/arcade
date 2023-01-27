@@ -25,11 +25,14 @@ int main() {
     Triangle triangle({2, 2}, {50, 30}, {20, 60});
     screen.draw(triangle, Color::Cyan());
 
-    Circle circle({100, 100}, 30);
-    screen.draw(circle, Color::Cyan(), true, Color::Blue());
+    AARectangle rect({50, 50}, {100, 100});
+    screen.draw(rect, Color::Red());
 
-    AARectangle rect({100, 20}, 30, 20);
-    screen.draw(rect, Color::Green());
+    Color color = Color::Blue();
+    color.setAlpha(128);
+    Circle circle({100, 100}, 30);
+    screen.draw(circle, Color::Cyan(), true, color);
+
 
     screen.swapBuffers();
 

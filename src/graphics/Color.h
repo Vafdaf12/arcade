@@ -7,31 +7,30 @@ struct SDL_PixelFormat;
 class Color {
 public:
     static void setColorFormat(const SDL_PixelFormat* pFormat);
+    static Color blendColors(const Color& src, const Color& dst);
 
-    Color() : m_color(0) {}
-    Color(uint32_t color) : m_color(color) {}
+    Color() : m_red(0), m_green(0), m_blue(0), m_alpha(0) {}
+    Color(uint32_t color);
 
     Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 
-    inline bool operator==(const Color& c) const {
-        return m_color == c.m_color;
-    }
+    bool operator==(const Color& c) const;
     inline bool operator!=(const Color& c) const { return !(*this == c); }
 
-    inline operator uint32_t() const { return m_color; }
-    inline uint32_t getColor() const { return m_color; }
+    inline operator uint32_t() const { return getColor(); }
+    uint32_t getColor() const;
 
     void SetRGBA(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 
-    void setRed(uint8_t red);
-    void setGreen(uint8_t green);
-    void setBlue(uint8_t blue);
-    void setAlpha(uint8_t alpha);
+    inline void setRed(uint8_t red) { m_red = red; }
+    inline void setGreen(uint8_t green) { m_green = green; }
+    inline void setBlue(uint8_t blue) { m_blue = blue; }
+    inline void setAlpha(uint8_t alpha) { m_alpha = alpha; }
 
-    uint8_t red() const;
-    uint8_t green() const;
-    uint8_t blue() const;
-    uint8_t alpha() const;
+    uint8_t red() const { return m_red; }
+    uint8_t green() const { return m_green; }
+    uint8_t blue() const { return m_blue; }
+    uint8_t alpha() const { return m_alpha; }
 
     static Color Black() { return Color(0, 0, 0); }
     static Color White() { return Color(255, 255, 255); }
@@ -48,5 +47,5 @@ public:
 
 private:
     static const SDL_PixelFormat* s_pFormat;
-    uint32_t m_color;
+    uint8_t m_red, m_green, m_blue, m_alpha;
 };
