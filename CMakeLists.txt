@@ -19,6 +19,7 @@ file(GLOB SRCFILES
     src/shapes/*.cpp
     src/util/*.cpp
     src/app/*.cpp
+    src/scene/*.cpp
     src/*.cpp
 )
 
