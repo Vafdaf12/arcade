@@ -18,12 +18,16 @@ file(GLOB SRCFILES
     src/graphics/*.cpp
     src/shapes/*.cpp
     src/util/*.cpp
+    src/app/*.cpp
     src/*.cpp
 )
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 add_executable(${NAME_EXE} ${SRCFILES})
+target_include_directories(${NAME_EXE}
+    PRIVATE src/
+)
 target_link_libraries(${NAME_EXE} SDL2)
 
 

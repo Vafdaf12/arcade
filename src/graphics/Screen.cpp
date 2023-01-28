@@ -1,6 +1,6 @@
 #include "Screen.h"
-#include "../shapes/Line2D.h"
-#include "../util/Vector2.h"
+#include "shapes/Line2D.h"
+#include "util/Vector2.h"
 #include "SDL_render.h"
 
 #include <SDL.h>

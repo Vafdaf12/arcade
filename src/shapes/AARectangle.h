@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Shape.h"
-#include "../util/Vector2.h"
+#include "util/Vector2.h"
 
 class AARectangle : public Shape {
 public:

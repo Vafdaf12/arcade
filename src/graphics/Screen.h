@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../shapes/Shape.h"
+#include "shapes/Shape.h"
 #include "Color.h"
 #include "ScreenBuffer.h"
 

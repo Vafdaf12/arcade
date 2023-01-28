@@ -1,6 +1,6 @@
 #include "Triangle.h"
 
-#include "../util/util.h"
+#include "util/util.h"
 
 #include <cmath>
 #include <numeric>
