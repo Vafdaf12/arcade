@@ -18,15 +18,28 @@ void ArcadeScene::init() {
     action.key = GameController::KEY_ACTION;
     action.action = [](uint32_t, InputState state) {
         std::cout << "Action button ";
-        if(GameController::isPressed(state)) {
+        if (GameController::isPressed(state)) {
             std::cout << "pressed";
-        }
-        else if(GameController::isReleased(state)) {
+        } else if (GameController::isReleased(state)) {
             std::cout << "released";
         }
         std::cout << std::endl;
     };
+
+    MouseButtonAction mouseAction;
+    mouseAction.button = GameController::MOUSE_BUTTON_LEFT;
+    mouseAction.inputAction = [](InputState state, const MousePosition& pos) {
+        std::cout << "Mouse button ";
+        if (GameController::isPressed(state)) {
+            std::cout << "pressed";
+        } else if (GameController::isReleased(state)) {
+            std::cout << "released";
+        }
+        std::cout << std::endl;
+    };
+
     m_controller.addAction(action);
+    m_controller.addMouseInputAction(mouseAction);
 }
 const std::string& ArcadeScene::getName() const {
     static std::string name = "Arcade Scene";

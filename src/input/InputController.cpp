@@ -24,6 +24,27 @@ void InputController::update(uint32_t dt) {
                 action(dt, event.key.state);
             }
             break;
+        case SDL_MOUSEMOTION:
+            if (m_pCurrentController) {
+
+                MouseMovedAction action =
+                    m_pCurrentController->getMouseMovedAction();
+                if (!action) break;
+
+                MousePosition pos = {event.motion.x, event.motion.y};
+                action(pos);
+            }
+
+            break;
+        case SDL_MOUSEBUTTONUP:
+        case SDL_MOUSEBUTTONDOWN:
+            if (m_pCurrentController) {
+                MouseInputAction action = m_pCurrentController->getMouseInputAction(event.button.button);
+
+                MousePosition pos = {event.button.x, event.button.y};
+                action(event.button.state, pos);
+            }
+            break;
         }
     }
 }
