@@ -1,9 +1,9 @@
 #include "App.h"
+
 #include <SDL.h>
 #include <cassert>
 #include <memory>
 
-#include "SDL_timer.h"
 #include "scene/ArcadeScene.h"
 #include "shapes/AARectangle.h"
 #include "shapes/Circle.h"
@@ -17,14 +17,15 @@ App& App::Singleton() {
 
 bool App::init(uint32_t width, uint32_t height, uint32_t mag) {
     m_pWindow = m_screen.init(width, height, mag);
+
+    auto arcade = std::make_unique<ArcadeScene>();
+    pushScene(std::move(arcade));
+
     return m_pWindow;
 }
 
 void App::run() {
     assert(m_screen);
-
-    auto arcade = std::make_unique<ArcadeScene>();
-    arcade->init();
 
     SDL_Event event;
     bool running = true;
@@ -47,14 +48,38 @@ void App::run() {
             }
         }
 
-        // Update
-        while (acc >= dt) {
-            arcade->update(dt);
-            acc -= dt;
-        }
+        Scene* currentScene = topScene();
+        assert(currentScene);
 
-        // Render
-        arcade->draw(m_screen);
+        if (currentScene) {
+            // Update
+            while (acc >= dt) {
+                currentScene->update(dt);
+                acc -= dt;
+            }
+
+            // Render
+            currentScene->draw(m_screen);
+        }
         m_screen.swapBuffers();
     }
+}
+void App::pushScene(std::unique_ptr<Scene> scene) {
+    assert(scene);
+    scene->init();
+    m_sceneStack.emplace_back(std::move(scene));
+    SDL_SetWindowTitle(m_pWindow, topScene()->getName().c_str());
+}
+void App::popScene() {
+    assert(!m_sceneStack.empty());
+    if (m_sceneStack.empty()) return;
+    m_sceneStack.pop_back();
+
+    if (auto scene = topScene()) {
+        SDL_SetWindowTitle(m_pWindow, scene->getName().c_str());
+    }
+}
+Scene* App::topScene() {
+    if (m_sceneStack.empty()) return nullptr;
+    return m_sceneStack.back().get();
 }
