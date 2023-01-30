@@ -34,6 +34,10 @@ void App::run() {
 
     uint32_t dt = 10;
     uint32_t acc = 0;
+
+    m_inputController.init(
+        [&running](uint32_t, InputState) { running = false; });
+
     while (running) {
         uint32_t frameTime = SDL_GetTicks() - lastTick;
         frameTime = frameTime > 300 ? 300 : frameTime;
@@ -42,11 +46,7 @@ void App::run() {
         acc += frameTime;
 
         // Input
-        while (SDL_PollEvent(&event)) {
-            switch (event.type) {
-            case SDL_QUIT: running = false; break;
-            }
-        }
+        m_inputController.update(dt);
 
         Scene* currentScene = topScene();
         assert(currentScene);
@@ -67,6 +67,7 @@ void App::run() {
 void App::pushScene(std::unique_ptr<Scene> scene) {
     assert(scene);
     scene->init();
+    m_inputController.setGameController(scene->getController());
     m_sceneStack.emplace_back(std::move(scene));
     SDL_SetWindowTitle(m_pWindow, topScene()->getName().c_str());
 }
@@ -76,6 +77,7 @@ void App::popScene() {
     m_sceneStack.pop_back();
 
     if (auto scene = topScene()) {
+        m_inputController.setGameController(scene->getController());
         SDL_SetWindowTitle(m_pWindow, scene->getName().c_str());
     }
 }

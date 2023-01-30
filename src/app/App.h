@@ -2,6 +2,7 @@
 
 #include "graphics/Screen.h"
 #include "scene/Scene.h"
+#include "input/InputController.h"
 
 #include <memory>
 #include <stdint.h>
@@ -30,4 +31,5 @@ private:
     SDL_Window* m_pWindow;
 
     std::vector<std::unique_ptr<Scene>> m_sceneStack;
+    InputController m_inputController;
 };

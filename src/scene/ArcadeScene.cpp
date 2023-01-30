@@ -6,10 +6,28 @@
 #include "shapes/Triangle.h"
 
 #include "graphics/Screen.h"
+#include "input/GameController.h"
+#include "input/InputAction.h"
+
+#include <iostream>
 
 ArcadeScene::ArcadeScene() {}
 
-void ArcadeScene::init() {}
+void ArcadeScene::init() {
+    ButtonAction action;
+    action.key = GameController::KEY_ACTION;
+    action.action = [](uint32_t, InputState state) {
+        std::cout << "Action button ";
+        if(GameController::isPressed(state)) {
+            std::cout << "pressed";
+        }
+        else if(GameController::isReleased(state)) {
+            std::cout << "released";
+        }
+        std::cout << std::endl;
+    };
+    m_controller.addAction(action);
+}
 const std::string& ArcadeScene::getName() const {
     static std::string name = "Arcade Scene";
     return name;
