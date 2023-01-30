@@ -20,6 +20,7 @@ file(GLOB SRCFILES
     src/util/*.cpp
     src/app/*.cpp
     src/scene/*.cpp
+    src/input/*.cpp
     src/*.cpp
 )
 
