@@ -21,6 +21,7 @@ file(GLOB SRCFILES
     src/app/*.cpp
     src/scene/*.cpp
     src/input/*.cpp
+    src/games/*.cpp
     src/*.cpp
 )
 
