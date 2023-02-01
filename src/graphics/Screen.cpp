@@ -159,6 +159,7 @@ void Screen::polyFill(const std::vector<Vector2>& points, const Color& color) {
 
             intersections.push_back(x);
         }
+        if(intersections.empty()) continue;
 
         std::sort(intersections.begin(), intersections.end(), std::less<>());
 

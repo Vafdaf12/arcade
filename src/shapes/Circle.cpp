@@ -20,12 +20,12 @@ bool Circle::containsPoint(const Vector2& point) const {
 
 }
 std::vector<Vector2> Circle::getPoints() const { 
-    static unsigned int NUM_SEGMENTS = 30;
+    static unsigned int NUM_SEGMENTS = 31;
 
     std::vector<Vector2> points;
     float da = 2 * M_PI / NUM_SEGMENTS;
 
-    Vector2 delta = Vector2::NEG_Y * m_radius;
+    Vector2 delta = Vector2::POS_X * m_radius;
 
     for(int i = 0; i < NUM_SEGMENTS; i++) {
         points.push_back(getCenterPoint() + delta);
