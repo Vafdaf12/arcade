@@ -8,7 +8,4 @@ void GameScene::init() { m_pGame->init(m_controller); }
 void GameScene::update(uint32_t dt) { m_pGame->update(dt); }
 void GameScene::draw(Screen& screen) { m_pGame->draw(screen); }
 
-const std::string& GameScene::getName() const {
-    static std::string name = "";
-    return name;
-}
+const std::string& GameScene::getName() const { return m_pGame->getName(); }
