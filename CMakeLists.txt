@@ -22,6 +22,7 @@ file(GLOB SRCFILES
     src/scene/*.cpp
     src/input/*.cpp
     src/games/*.cpp
+    src/games/breakout/*.cpp
     src/*.cpp
 )
 

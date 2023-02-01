@@ -5,10 +5,15 @@
 #include <memory>
 
 #include "scene/ArcadeScene.h"
+#include "scene/GameScene.h"
 #include "shapes/AARectangle.h"
 #include "shapes/Circle.h"
 #include "shapes/Line2D.h"
 #include "shapes/Triangle.h"
+
+#include "games/Game.h"
+#include "games/breakout/Breakout.h"
+
 
 App& App::Singleton() {
     static App app;
@@ -20,6 +25,14 @@ bool App::init(uint32_t width, uint32_t height, uint32_t mag) {
 
     auto arcade = std::make_unique<ArcadeScene>();
     pushScene(std::move(arcade));
+
+    // TEMP
+    {
+        auto breakout = std::make_unique<Breakout>();
+        auto breakoutScene = std::make_unique<GameScene>(std::move(breakout));
+        pushScene(std::move(breakoutScene));
+    }
+
 
     return m_pWindow;
 }
