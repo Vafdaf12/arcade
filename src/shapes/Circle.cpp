@@ -20,7 +20,7 @@ bool Circle::containsPoint(const Vector2& point) const {
 
 }
 std::vector<Vector2> Circle::getPoints() const { 
-    static unsigned int NUM_SEGMENTS = 31;
+    static unsigned int NUM_SEGMENTS = 30;
 
     std::vector<Vector2> points;
     float da = 2 * M_PI / NUM_SEGMENTS;

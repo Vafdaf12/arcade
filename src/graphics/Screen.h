@@ -1,8 +1,9 @@
 #pragma once
 
-#include "shapes/Shape.h"
 #include "Color.h"
 #include "ScreenBuffer.h"
+#include "graphics/render/SoftwareRenderer.h"
+#include "shapes/Shape.h"
 
 #include <stdint.h>
 
@@ -42,9 +43,6 @@ private:
     Screen(const Screen&) = delete;
     Screen& operator=(const Screen&) = delete;
 
-    void clearScreen();
-    void polyFill(const std::vector<Vector2>& points, const Color& color);
-
     uint32_t m_width, m_height;
 
     SDL_Window* m_pWindow;
@@ -52,4 +50,5 @@ private:
 
     ScreenBuffer m_backBuffer;
     Color m_clearColor;
+    SoftwareRenderer m_renderer;
 };
