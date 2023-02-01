@@ -2,6 +2,7 @@
 
 #include "games/Game.h"
 #include "./Paddle.h"
+#include "games/breakout/Ball.h"
 
 class Breakout : public Game {
 public:
@@ -13,5 +14,7 @@ public:
 
 private:
     void resetGame();
+
     Paddle m_paddle;
+    Ball m_ball;
 };

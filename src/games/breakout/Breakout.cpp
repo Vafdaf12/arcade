@@ -46,9 +46,16 @@ void Breakout::resetGame() {
     AARectangle boundary(Vector2::ZERO, app.width(), app.height());
 
     m_paddle = Paddle(paddleRect, boundary);
+    m_ball.setPosition({app.width() / 2.0f, app.height() / 2.0f});
 }
-void Breakout::update(uint32_t dt) { m_paddle.update(dt); }
-void Breakout::draw(Screen& screen) { m_paddle.draw(screen); }
+void Breakout::update(uint32_t dt) {
+    m_paddle.update(dt);
+    m_ball.update(dt);
+}
+void Breakout::draw(Screen& screen) {
+    m_paddle.draw(screen);
+    m_ball.draw(screen);
+}
 const std::string& Breakout::getName() const {
     static std::string name = "Breakout";
     return name;
