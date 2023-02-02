@@ -17,6 +17,7 @@ public:
     void makeFlushWithEdge(
         const BoundaryEdge& edge, Vector2& pointOnEdge, bool limitToEdge);
 
+    void bounce(const BoundaryEdge& edge);
     inline void stop() { m_velocity = Vector2::ZERO; }
 
     inline const AARectangle& getBoundingBox() const { return m_rect; }
@@ -27,7 +28,7 @@ public:
     inline float getRadius() const { return m_rect.getWidth() / 2.0f; }
 
     inline void setPosition(const Vector2& pos) {
-        m_rect.moveTo(pos - Vector2::ONE * getRadius());
+        m_rect.moveTo(pos - Vector2::ONE * (getRadius()-1));
     }
     inline Vector2 getPosition() const { return m_rect.getCenterPoint(); }
 

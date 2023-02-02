@@ -2,7 +2,8 @@
 
 #include "games/Game.h"
 #include "./Paddle.h"
-#include "games/breakout/Ball.h"
+#include "./Ball.h"
+#include "./LevelBoundary.h"
 
 class Breakout : public Game {
 public:
@@ -15,6 +16,9 @@ public:
 private:
     void resetGame();
 
+    static const Vector2 BALL_INIT_VELOCITY;
+
     Paddle m_paddle;
     Ball m_ball;
+    LevelBoundary m_boundary;
 };

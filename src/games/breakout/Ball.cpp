@@ -10,7 +10,8 @@
 
 Ball::Ball() : Ball(Vector2::ZERO, INIT_RADIUS) {}
 Ball::Ball(const Vector2& pos, float radius) {
-    m_rect = AARectangle(pos - Vector2::ONE * (radius / 2), radius*2, radius*2);
+    m_rect =
+        AARectangle(pos - Vector2::ONE * (radius / 2), radius * 2, radius * 2);
 }
 void Ball::draw(Screen& screen) {
     Circle circle(getPosition(), getRadius());
@@ -25,4 +26,10 @@ void Ball::makeFlushWithEdge(
 
     pointOnEdge = edge.edge.closestPointTo(getPosition(), limitToEdge);
     setPosition(pointOnEdge + edge.normal * getRadius());
+}
+
+void Ball::bounce(const BoundaryEdge& edge) {
+    Vector2 collisionPoint;
+    makeFlushWithEdge(edge, collisionPoint, false);
+    m_velocity = m_velocity.reflect(edge.normal);
 }
