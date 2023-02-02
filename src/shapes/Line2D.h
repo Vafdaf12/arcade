@@ -12,6 +12,7 @@ public:
     inline const Vector2& v1() const { return m_v1; }
 
     bool operator==(const Line2D& line) const;
+    inline bool operator!=(const Line2D line) const { return !(*this == line); }
 
     float minDistanceTo(const Vector2& point, bool segment = false) const;
     Vector2 closestPointTo(const Vector2& point, bool segment = false) const;
