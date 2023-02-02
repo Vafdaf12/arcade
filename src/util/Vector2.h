@@ -22,7 +22,7 @@ struct Vector2 {
 
     // --- EQUALITY ---
     inline bool equals(const Vector2& v) const { return x == v.x && y == v.y; }
-    inline bool operator==(const Vector2& v) const { return isEqual(x, v.x) && isEqual(x, v.y); }
+    inline bool operator==(const Vector2& v) const { return isEqual(x, v.x) && isEqual(y, v.y); }
     inline bool operator!=(const Vector2& v) const { return !(*this == v); }
 
     // --- OPERATOR OVERLOADS ---
