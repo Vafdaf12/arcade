@@ -2,7 +2,10 @@
 
 #include "./Ball.h"
 #include "./BoundaryEdge.h"
+#include "app/App.h"
 #include "games/breakout/Block.h"
+#include "util/FileCommandLoader.h"
+#include <algorithm>
 
 BreakoutLevel::BreakoutLevel(const AARectangle& boundary) {
     createDefaultLevel(boundary);
@@ -81,4 +84,111 @@ void BreakoutLevel::createDefaultLevel(const AARectangle& boundary) {
         }
         rect.move(Vector2::POS_Y * BLOCK_HEIGHT);
     }
+}
+
+struct LayoutBlock {
+    char symbol = '-';
+    int health = 0;
+    Color color = Color::BLACK;
+};
+
+std::vector<LayoutBlock>::const_iterator findSymbol(
+    const std::vector<LayoutBlock>& blocks, char symbol) {
+    return std::find_if(blocks.begin(),
+        blocks.end(),
+        [&](const LayoutBlock& layout) { return layout.symbol == symbol; });
+}
+
+std::vector<BreakoutLevel> BreakoutLevel::loadFromFile(
+    const std::string& path) {
+    static constexpr int BLOCK_WIDTH = 16;
+    static constexpr int BLOCK_HEIGHT = 8;
+
+    App& app = App::Singleton();
+
+    std::vector<BreakoutLevel> levels;
+    std::vector<LayoutBlock> layoutBlocks;
+    std::vector<Block> levelBlocks;
+
+    int width = 0;
+    int height = 0;
+
+    FileCommandLoader loader;
+
+    // --- LEVEL COMMANDS ---
+    Command levelCommand("level", [&](const ParseParams& params) {
+        if (levels.size() != 0) levels.back().load(levelBlocks);
+        levelBlocks.clear();
+        width = 0;
+        height = 0;
+
+        levels.emplace_back(
+            AARectangle(Vector2::ZERO, app.width(), app.height()));
+    });
+    loader.addCommand(levelCommand);
+
+    Command widthCommand("width", [&](const ParseParams& params) {
+        width = FileCommandLoader::parseInt(params);
+    });
+    loader.addCommand(widthCommand);
+    Command heightCommand("height", [&](const ParseParams& params) {
+        height = FileCommandLoader::parseInt(params);
+    });
+    loader.addCommand(heightCommand);
+
+    // --- BLOCK COMMANDS ---
+    Command blockCommand("block", [&](const ParseParams&) {
+        LayoutBlock block{};
+        layoutBlocks.push_back(block);
+    });
+    loader.addCommand(blockCommand);
+
+    Command symbolCommand("symbol", [&](const ParseParams& params) {
+        layoutBlocks.back().symbol = FileCommandLoader::parseChar(params);
+    });
+    loader.addCommand(symbolCommand);
+
+    Command fillCommand("fillcolor", [&](const ParseParams& params) {
+        layoutBlocks.back().color = FileCommandLoader::parseColor(params);
+    });
+    loader.addCommand(fillCommand);
+
+    Command hpCommand("hp", [&](const ParseParams& params) {
+        layoutBlocks.back().health = FileCommandLoader::parseInt(params);
+    });
+    loader.addCommand(hpCommand);
+
+    // -- MAIN LAYOUT ---
+    Command layoutCommand(
+        "layout",
+        [&](const ParseParams& params) {
+            float startX =
+                static_cast<float>(app.width() - BLOCK_WIDTH * width) / 2;
+
+            AARectangle rect(
+                Vector2(startX, (params.lineNum + 1) * BLOCK_HEIGHT),
+                BLOCK_WIDTH,
+                BLOCK_HEIGHT);
+
+            for (int x = 0; x < params.line.length(); x++) {
+                if (params.line[x] != '-') {
+                    auto layoutBlock = findSymbol(layoutBlocks, params.line[x]);
+                    assert(layoutBlock != layoutBlocks.end());
+
+                    levelBlocks.emplace_back(rect,
+                        layoutBlock->health,
+                        Color::BLACK,
+                        layoutBlock->color);
+                }
+                rect.move(Vector2(BLOCK_WIDTH, 0));
+            }
+        },
+        CommandType::Multiline);
+    loader.addCommand(layoutCommand);
+
+    // Parse file
+    loader.loadFile(path);
+    if (levels.size() > 0) levels.back().load(levelBlocks);
+
+    return levels;
 }

@@ -1,9 +1,9 @@
 #pragma once
 
 #include <functional>
+#include <stdint.h>
 #include <string>
 #include <vector>
-#include <stdint.h>
 
 class Color;
 class Vector2;
@@ -25,6 +25,12 @@ struct Command {
     CommandType type = CommandType::SingleLine;
     std::string command = "";
     ParseFunc parseFunc = nullptr;
+
+    Command() = default;
+    Command(const std::string& command,
+        const ParseFunc& func,
+        CommandType type = CommandType::SingleLine)
+        : type(type), parseFunc(func), command(command) {}
 };
 
 class FileCommandLoader {
@@ -39,6 +45,7 @@ public:
     static char parseChar(const ParseParams& params);
 
 private:
-    std::vector<Command>::const_iterator findCommand(const std::string& line, size_t& paramPos) const;
+    std::vector<Command>::const_iterator findCommand(
+        const std::string& line, size_t& paramPos) const;
     std::vector<Command> m_commands;
 };

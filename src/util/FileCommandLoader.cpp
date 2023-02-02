@@ -126,5 +126,5 @@ std::string FileCommandLoader::parseString(const ParseParams& params) {
     return params.line.substr(params.readPos);
 }
 char FileCommandLoader::parseChar(const ParseParams& params) {
-    return params.line[0];
+    return params.line[params.readPos];
 }

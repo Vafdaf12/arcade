@@ -17,6 +17,8 @@ public:
     void update(uint32_t dt, Ball& ball);
 
     void draw(Screen& screen);
+
+    static std::vector<BreakoutLevel> loadFromFile(const std::string& path);
     
 private:
     void createDefaultLevel(const AARectangle& boundary);

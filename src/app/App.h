@@ -26,6 +26,8 @@ public:
     void popScene();
     Scene* topScene();
 
+    static const std::string& getBasePath();
+
 private:
     Screen m_screen;
     SDL_Window* m_pWindow;

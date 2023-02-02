@@ -94,3 +94,9 @@ Scene* App::topScene() {
     if (m_sceneStack.empty()) return nullptr;
     return m_sceneStack.back().get();
 }
+
+    const std::string& App::getBasePath() {
+        static char* base = SDL_GetBasePath();
+        static std::string basePath = base;
+        return basePath;
+    }

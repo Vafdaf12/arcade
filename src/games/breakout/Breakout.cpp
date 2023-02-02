@@ -10,7 +10,7 @@
 const Vector2 Breakout::BALL_INIT_VELOCITY(100, -100);
 
 Breakout::Breakout()
-    : m_paddle(AARectangle(), AARectangle()), m_boundary(AARectangle()), m_level(AARectangle()) {}
+    : m_paddle(AARectangle(), AARectangle()), m_boundary(AARectangle()) {}
 
 void Breakout::init(GameController& controller) {
     controller.clear();
@@ -48,10 +48,13 @@ void Breakout::resetGame() {
         Paddle::HEIGHT);
     AARectangle boundary(Vector2::ZERO, app.width(), app.height());
 
-    m_level = BreakoutLevel(boundary);
+    std::cout << "Path: " << app.getBasePath() << std::endl;
+    m_levels = BreakoutLevel::loadFromFile(app.getBasePath() + "../assets/BreakoutLevels.txt");
+    m_currentLevel = 0;
+
     m_boundary = LevelBoundary(boundary);
     m_paddle = Paddle(paddleRect, boundary);
-    m_ball.setPosition({app.width() / 2.0f, app.height() / 2.0f});
+    m_ball.setPosition({app.width() / 2.0f, app.height() * 0.75f});
     m_ball.setVelocity(BALL_INIT_VELOCITY);
 }
 void Breakout::update(uint32_t dt) {
@@ -65,12 +68,12 @@ void Breakout::update(uint32_t dt) {
         m_ball.bounce(edge);
 
     }
-    m_level.update(dt, m_ball);
+    getCurrentLevel().update(dt, m_ball);
 }
 void Breakout::draw(Screen& screen) {
     m_paddle.draw(screen);
     m_ball.draw(screen);
-    m_level.draw(screen);
+    getCurrentLevel().draw(screen);
     screen.draw(m_boundary.getRect(), Color::WHITE);
 }
 const std::string& Breakout::getName() const {
