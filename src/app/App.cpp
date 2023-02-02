@@ -4,6 +4,7 @@
 #include <cassert>
 #include <memory>
 
+#include "SDL_timer.h"
 #include "scene/ArcadeScene.h"
 #include "scene/GameScene.h"
 #include "shapes/AARectangle.h"
@@ -13,7 +14,6 @@
 
 #include "games/Game.h"
 #include "games/breakout/Breakout.h"
-
 
 App& App::Singleton() {
     static App app;
@@ -33,7 +33,6 @@ bool App::init(uint32_t width, uint32_t height, uint32_t mag) {
         pushScene(std::move(breakoutScene));
     }
 
-
     return m_pWindow;
 }
 
@@ -43,20 +42,15 @@ void App::run() {
     SDL_Event event;
     bool running = true;
 
-    uint32_t lastTick = SDL_GetTicks();
-
-    uint32_t dt = 10;
-    uint32_t acc = 0;
+    static constexpr uint32_t FRAME_TIME = 1000 / 60;
 
     m_inputController.init(
         [&running](uint32_t, InputState) { running = false; });
 
+    uint32_t lastTick = SDL_GetTicks();
     while (running) {
-        uint32_t frameTime = SDL_GetTicks() - lastTick;
-        frameTime = frameTime > 300 ? 300 : frameTime;
-
-        lastTick += frameTime;
-        acc += frameTime;
+        uint32_t dt = SDL_GetTicks() - lastTick;
+        lastTick += dt;
 
         // Input
         m_inputController.update(dt);
@@ -66,15 +60,17 @@ void App::run() {
 
         if (currentScene) {
             // Update
-            while (acc >= dt) {
-                currentScene->update(dt);
-                acc -= dt;
-            }
+            currentScene->update(dt);
 
             // Render
             currentScene->draw(m_screen);
         }
         m_screen.swapBuffers();
+
+        uint32_t drawTime = SDL_GetTicks() - lastTick;
+        if (drawTime > FRAME_TIME) continue;
+
+        SDL_Delay(FRAME_TIME - drawTime);
     }
 }
 void App::pushScene(std::unique_ptr<Scene> scene) {
