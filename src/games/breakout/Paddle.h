@@ -6,6 +6,7 @@
 #include <stdint.h>
 
 class Screen;
+class Ball;
 
 class Paddle : public Excluder {
 public:
@@ -13,8 +14,10 @@ public:
 
     enum Direction { Left = 1 << 0, Right = 1 << 1, None = 0 };
 
-    void update(uint32_t dt);
+    void update(uint32_t dt, Ball& ball);
     void draw(Screen& screen);
+
+    bool bounce(Ball& ball);
 
     inline bool isMovingLeft() const { return m_direction == Left; }
     inline bool isMovingRight() const { return m_direction == Right; }
@@ -31,4 +34,5 @@ private:
     AARectangle m_boundary;
 
     static constexpr float SPEED = 100;
+    static constexpr float BOUNCE_PADDING = 0.2f;
 };

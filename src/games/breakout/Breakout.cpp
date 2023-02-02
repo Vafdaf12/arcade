@@ -54,8 +54,10 @@ void Breakout::resetGame() {
     m_ball.setVelocity(BALL_INIT_VELOCITY);
 }
 void Breakout::update(uint32_t dt) {
-    m_paddle.update(dt);
+    m_paddle.update(dt, m_ball);
     m_ball.update(dt);
+
+    if(m_paddle.bounce(m_ball)) return; 
 
     BoundaryEdge edge;
     if(m_boundary.hasCollided(m_ball, edge)) {
