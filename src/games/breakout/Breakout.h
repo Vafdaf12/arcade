@@ -5,15 +5,18 @@
 #include "./LevelBoundary.h"
 #include "./Paddle.h"
 #include "games/Game.h"
+#include "./HighscoreTable.h"
 
 #include <vector>
 
 class Breakout : public Game {
 public:
     Breakout();
+
     void init(GameController& controller) override;
     void update(uint32_t dt) override;
     void draw(Screen& screen) override;
+
     const std::string& getName() const override;
 
     enum GameState { Play, Serve, GameOver };
@@ -38,4 +41,9 @@ private:
     GameState m_state;
     int m_lives;
     float m_thresholdY;
+
+    int m_score;
+    HighscoreTable m_highscores;
+    std::string m_playerName;
+
 };

@@ -24,6 +24,11 @@ void Breakout::setToServeState() {
 }
 
 void Breakout::init(GameController& controller) {
+    m_highscores.loadFromFile(
+        App::Singleton().getBasePath() + "highscores.txt");
+
+    m_playerName = "ABC";
+    m_score = 0;
     m_currentLevel = 0;
     controller.clear();
     resetGame();
@@ -73,6 +78,11 @@ void Breakout::init(GameController& controller) {
 void Breakout::resetGame(size_t level) {
     App& app = App::Singleton();
 
+    if (m_score) m_highscores.addScore(m_playerName, m_score);
+    m_highscores.saveToFile(App::Singleton().getBasePath() + "highscores.txt");
+
+    if(isGameOver()) m_score = 0;
+
     m_levels = BreakoutLevel::loadFromFile(
         app.getBasePath() + "../assets/BreakoutLevels.txt");
 
@@ -104,18 +114,17 @@ void Breakout::update(uint32_t dt) {
         if (m_boundary.hasCollided(m_ball, edge)) {
             m_ball.bounce(edge);
         }
-        getCurrentLevel().update(dt, m_ball);
 
-        if(isBallOutOfBounds()) {
+        if (getCurrentLevel().update(dt, m_ball)) m_score += 10;
+
+        if (isBallOutOfBounds()) {
             reduceLife();
-            if(!isGameOver()) setToServeState();
+            if (!isGameOver()) setToServeState();
             else m_state = GameOver;
-        }
-        else if(getCurrentLevel().isLevelComplete()) {
+        } else if (getCurrentLevel().isLevelComplete()) {
             m_currentLevel = (m_currentLevel + 1) % m_levels.size();
             resetGame(m_currentLevel);
         }
-
     }
 }
 void Breakout::draw(Screen& screen) {
@@ -124,9 +133,9 @@ void Breakout::draw(Screen& screen) {
     getCurrentLevel().draw(screen);
     screen.draw(m_boundary.getRect(), Color::WHITE);
 
-    float padding = 5+2;
+    float padding = 5 + 2;
     Circle life(Vector2(padding, App::Singleton().height() - padding), 5);
-    for(int i = 0; i < m_lives; i++) {
+    for (int i = 0; i < m_lives; i++) {
         screen.draw(life, Color::RED, true, Color::RED);
         life.move(Vector2(12, 0));
     }

@@ -14,7 +14,7 @@ public:
 
     void load(const std::vector<Block>& blocks);
 
-    void update(uint32_t dt, Ball& ball);
+    bool update(uint32_t dt, Ball& ball);
 
     void draw(Screen& screen);
 

@@ -16,7 +16,7 @@ void BreakoutLevel::load(const std::vector<Block>& blocks) {
     m_blocks = blocks;
 }
 
-void BreakoutLevel::update(uint32_t dt, Ball& ball) {
+bool BreakoutLevel::update(uint32_t dt, Ball& ball) {
     std::vector<Block> collided;
 
     float largestOffset = -1;
@@ -49,6 +49,7 @@ void BreakoutLevel::update(uint32_t dt, Ball& ball) {
         Vector2 p;
         ball.makeFlushWithEdge(edge, p, true);
     }
+    return pBounceBlock != nullptr;
 }
 
 void BreakoutLevel::draw(Screen& screen) {
