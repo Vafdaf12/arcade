@@ -26,9 +26,9 @@ Vector2 AARectangle::getCenterPoint() const {
 std::vector<Vector2> AARectangle::getPoints() const {
     std::vector<Vector2> points;
     points.push_back(m_points[0]);
-    points.push_back(m_points[0] + Vector2::POS_X * getWidth());
-    points.push_back(m_points[1] + Vector2::ONE);
-    points.push_back(m_points[0] + Vector2::POS_Y * getHeight());
+    points.push_back(m_points[0] + Vector2::POS_X * (getWidth()-1));
+    points.push_back(m_points[1]);
+    points.push_back(m_points[0] + Vector2::POS_Y * (getHeight()-1));
 
     return points;
 }
