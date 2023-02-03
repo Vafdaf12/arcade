@@ -16,11 +16,15 @@ public:
     void draw(Screen& screen) override;
     const std::string& getName() const override;
 
+    enum GameState {
+        Play,
+        Serve,
+        GameOver
+    };
 private:
     void resetGame();
     inline BreakoutLevel& getCurrentLevel() { return m_levels[m_currentLevel]; }
-
-    static const Vector2 BALL_INIT_VELOCITY;
+    void setToServeState();
 
     Paddle m_paddle;
     Ball m_ball;
@@ -28,5 +32,6 @@ private:
 
     std::vector<BreakoutLevel> m_levels;
     size_t m_currentLevel;
+    GameState m_state;
 
 };

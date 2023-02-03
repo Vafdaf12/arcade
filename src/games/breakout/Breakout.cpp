@@ -7,17 +7,46 @@
 #include <functional>
 #include <iostream>
 
-const Vector2 Breakout::BALL_INIT_VELOCITY(100, -100);
-
 Breakout::Breakout()
     : m_paddle(AARectangle(), AARectangle()), m_boundary(AARectangle()) {}
 
+void Breakout::setToServeState() {
+    m_state = Serve;
+    m_ball.stop();
+
+    AARectangle paddle = m_paddle.getRect();
+    Vector2 center = paddle.getCenterPoint();
+
+    float r = m_ball.getRadius();
+
+    m_ball.setPosition(Vector2(center.x - r, paddle.getTopLeft().y - r - 1));
+}
+
 void Breakout::init(GameController& controller) {
     controller.clear();
+    resetGame();
+
+    ButtonAction serveAction;
+    serveAction.key = GameController::KEY_ACTION;
+    serveAction.action = [this](uint32_t dt, InputState state) {
+        if (m_state == Serve) {
+            if (!GameController::isPressed(state)) return;
+
+            m_state = Play;
+            if (m_paddle.isMovingLeft())
+                m_ball.setVelocity({-Ball::INIT_SPEED, -Ball::INIT_SPEED});
+            else m_ball.setVelocity({Ball::INIT_SPEED, -Ball::INIT_SPEED});
+
+        } else if (m_state == GameOver) {
+            if (!GameController::isPressed(state)) return;
+            resetGame();
+        }
+    };
 
     ButtonAction leftKeyAction;
     leftKeyAction.key = GameController::KEY_LEFT;
     leftKeyAction.action = [this](uint32_t dt, InputState state) {
+        if (!(m_state == Play || m_state == Serve)) return;
         if (GameController::isPressed(state))
             m_paddle.setMovementDirection(Paddle::Left);
         if (GameController::isReleased(state))
@@ -27,6 +56,7 @@ void Breakout::init(GameController& controller) {
     ButtonAction rightKeyAction;
     rightKeyAction.key = GameController::KEY_RIGHT;
     rightKeyAction.action = [this](uint32_t dt, InputState state) {
+        if (!(m_state == Play || m_state == Serve)) return;
         if (GameController::isPressed(state))
             m_paddle.setMovementDirection(Paddle::Right);
         if (GameController::isReleased(state))
@@ -35,8 +65,7 @@ void Breakout::init(GameController& controller) {
 
     controller.addAction(leftKeyAction);
     controller.addAction(rightKeyAction);
-
-    resetGame();
+    controller.addAction(serveAction);
 }
 
 void Breakout::resetGame() {
@@ -49,26 +78,30 @@ void Breakout::resetGame() {
     AARectangle boundary(Vector2::ZERO, app.width(), app.height());
 
     std::cout << "Path: " << app.getBasePath() << std::endl;
-    m_levels = BreakoutLevel::loadFromFile(app.getBasePath() + "../assets/BreakoutLevels.txt");
+    m_levels = BreakoutLevel::loadFromFile(
+        app.getBasePath() + "../assets/BreakoutLevels.txt");
     m_currentLevel = 0;
 
     m_boundary = LevelBoundary(boundary);
     m_paddle = Paddle(paddleRect, boundary);
-    m_ball.setPosition({app.width() / 2.0f, app.height() * 0.75f});
-    m_ball.setVelocity(BALL_INIT_VELOCITY);
+    setToServeState();
 }
 void Breakout::update(uint32_t dt) {
-    m_paddle.update(dt, m_ball);
-    m_ball.update(dt);
+    if (m_state == Serve) {
+        m_paddle.update(dt, m_ball);
+        setToServeState();
+    } else if (m_state == Play) {
+        m_paddle.update(dt, m_ball);
+        m_ball.update(dt);
 
-    if(m_paddle.bounce(m_ball)) return; 
+        if (m_paddle.bounce(m_ball)) return;
 
-    BoundaryEdge edge;
-    if(m_boundary.hasCollided(m_ball, edge)) {
-        m_ball.bounce(edge);
-
+        BoundaryEdge edge;
+        if (m_boundary.hasCollided(m_ball, edge)) {
+            m_ball.bounce(edge);
+        }
+        getCurrentLevel().update(dt, m_ball);
     }
-    getCurrentLevel().update(dt, m_ball);
 }
 void Breakout::draw(Screen& screen) {
     m_paddle.draw(screen);

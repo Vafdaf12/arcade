@@ -32,6 +32,8 @@ public:
     }
     inline Vector2 getPosition() const { return m_rect.getCenterPoint(); }
 
+    static constexpr float INIT_SPEED = 100;
+
 private:
     AARectangle m_rect;
     Vector2 m_velocity;
