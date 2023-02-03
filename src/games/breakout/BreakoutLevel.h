@@ -18,6 +18,7 @@ public:
 
     void draw(Screen& screen);
 
+    bool isLevelComplete() const;
     static std::vector<BreakoutLevel> loadFromFile(const std::string& path);
     
 private:

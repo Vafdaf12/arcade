@@ -3,6 +3,7 @@
 #include "app/App.h"
 #include "input/GameController.h"
 #include "shapes/AARectangle.h"
+#include "shapes/Circle.h"
 
 #include <functional>
 #include <iostream>
@@ -23,6 +24,7 @@ void Breakout::setToServeState() {
 }
 
 void Breakout::init(GameController& controller) {
+    m_currentLevel = 0;
     controller.clear();
     resetGame();
 
@@ -68,8 +70,11 @@ void Breakout::init(GameController& controller) {
     controller.addAction(serveAction);
 }
 
-void Breakout::resetGame() {
+void Breakout::resetGame(size_t level) {
     App& app = App::Singleton();
+
+    m_levels = BreakoutLevel::loadFromFile(
+        app.getBasePath() + "../assets/BreakoutLevels.txt");
 
     AARectangle paddleRect(
         {(app.width() - Paddle::WIDTH) / 2, app.height() - 3 * Paddle::HEIGHT},
@@ -77,13 +82,12 @@ void Breakout::resetGame() {
         Paddle::HEIGHT);
     AARectangle boundary(Vector2::ZERO, app.width(), app.height());
 
-    std::cout << "Path: " << app.getBasePath() << std::endl;
-    m_levels = BreakoutLevel::loadFromFile(
-        app.getBasePath() + "../assets/BreakoutLevels.txt");
-    m_currentLevel = 0;
-
     m_boundary = LevelBoundary(boundary);
     m_paddle = Paddle(paddleRect, boundary);
+    m_lives = NUM_LIVES;
+    m_currentLevel = level;
+    m_thresholdY = App::Singleton().height() - 2 * Paddle::HEIGHT;
+
     setToServeState();
 }
 void Breakout::update(uint32_t dt) {
@@ -101,6 +105,17 @@ void Breakout::update(uint32_t dt) {
             m_ball.bounce(edge);
         }
         getCurrentLevel().update(dt, m_ball);
+
+        if(isBallOutOfBounds()) {
+            reduceLife();
+            if(!isGameOver()) setToServeState();
+            else m_state = GameOver;
+        }
+        else if(getCurrentLevel().isLevelComplete()) {
+            m_currentLevel = (m_currentLevel + 1) % m_levels.size();
+            resetGame(m_currentLevel);
+        }
+
     }
 }
 void Breakout::draw(Screen& screen) {
@@ -108,8 +123,23 @@ void Breakout::draw(Screen& screen) {
     m_ball.draw(screen);
     getCurrentLevel().draw(screen);
     screen.draw(m_boundary.getRect(), Color::WHITE);
+
+    float padding = 5+2;
+    Circle life(Vector2(padding, App::Singleton().height() - padding), 5);
+    for(int i = 0; i < m_lives; i++) {
+        screen.draw(life, Color::RED, true, Color::RED);
+        life.move(Vector2(12, 0));
+    }
 }
 const std::string& Breakout::getName() const {
     static std::string name = "Breakout";
     return name;
+}
+
+bool Breakout::isBallOutOfBounds() const {
+    return m_ball.getPosition().y > m_thresholdY;
+}
+void Breakout::reduceLife(int amount) {
+    if (m_lives < 0) return;
+    m_lives -= amount;
 }

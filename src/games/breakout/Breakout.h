@@ -1,10 +1,10 @@
 #pragma once
 
-#include "games/Game.h"
-#include "./Paddle.h"
 #include "./Ball.h"
-#include "./LevelBoundary.h"
 #include "./BreakoutLevel.h"
+#include "./LevelBoundary.h"
+#include "./Paddle.h"
+#include "games/Game.h"
 
 #include <vector>
 
@@ -16,15 +16,18 @@ public:
     void draw(Screen& screen) override;
     const std::string& getName() const override;
 
-    enum GameState {
-        Play,
-        Serve,
-        GameOver
-    };
+    enum GameState { Play, Serve, GameOver };
+
 private:
-    void resetGame();
+    void resetGame(size_t level = 0);
     inline BreakoutLevel& getCurrentLevel() { return m_levels[m_currentLevel]; }
     void setToServeState();
+
+    bool isBallOutOfBounds() const;
+    void reduceLife(int amount = 1);
+    inline bool isGameOver() const { return m_lives < 0; }
+
+    static constexpr int NUM_LIVES = 3;
 
     Paddle m_paddle;
     Ball m_ball;
@@ -33,5 +36,6 @@ private:
     std::vector<BreakoutLevel> m_levels;
     size_t m_currentLevel;
     GameState m_state;
-
+    int m_lives;
+    float m_thresholdY;
 };

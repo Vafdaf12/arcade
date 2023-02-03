@@ -192,3 +192,10 @@ std::vector<BreakoutLevel> BreakoutLevel::loadFromFile(
 
     return levels;
 }
+bool BreakoutLevel::isLevelComplete() const {
+    for(const auto& block : m_blocks) {
+        if(block.getHealth() == Block::UNBREAKABLE) continue;
+        if(!block.isDestroyed() ) return false;
+    }
+    return true;
+}
