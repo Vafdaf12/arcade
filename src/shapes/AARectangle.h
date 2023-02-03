@@ -21,7 +21,7 @@ public:
     inline float getWidth() const { return m_points[1].x - m_points[0].x + 1; }
     inline float getHeight() const { return m_points[1].y - m_points[0].y + 1; }
 
-    void moveTo(const Vector2& newPos);
+    void setPosition(const Vector2& newPos);
     bool intersects(const AARectangle& other) const;
     bool containsPoint(const Vector2& point) const;
     static AARectangle inset(const AARectangle& rect, const Vector2& insets);

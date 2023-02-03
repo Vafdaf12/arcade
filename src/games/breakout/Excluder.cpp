@@ -65,7 +65,7 @@ void Excluder::move(const Vector2& delta) {
     setupEdges();
 }
 void Excluder::setPosition(const Vector2& pos) {
-    m_rect.moveTo(pos);
+    m_rect.setPosition(pos);
     setupEdges();
 }
 

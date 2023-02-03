@@ -12,7 +12,7 @@ public:
     inline float getRadius() const { return m_radius; }
     inline void setRadius(float r) { m_radius = r; }
 
-    inline void moveTo(const Vector2& newPos) { m_points[0] = newPos; }
+    inline void setPosition(const Vector2& newPos) { m_points[0] = newPos; }
 
     bool intersects(const Circle& circle) const;
     bool containsPoint(const Vector2& point) const;

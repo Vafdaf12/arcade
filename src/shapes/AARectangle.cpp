@@ -33,7 +33,7 @@ std::vector<Vector2> AARectangle::getPoints() const {
     return points;
 }
 
-void AARectangle::moveTo(const Vector2& newPos) {
+void AARectangle::setPosition(const Vector2& newPos) {
     Vector2 delta(getWidth()-1, getHeight()-1);
     m_points[0] = newPos;
     m_points[1] = newPos + delta;

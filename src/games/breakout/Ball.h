@@ -28,7 +28,7 @@ public:
     inline float getRadius() const { return m_rect.getWidth() / 2.0f; }
 
     inline void setPosition(const Vector2& pos) {
-        m_rect.moveTo(pos - Vector2::ONE * (getRadius()-1));
+        m_rect.setPosition(pos - Vector2::ONE * (getRadius()-1));
     }
     inline Vector2 getPosition() const { return m_rect.getCenterPoint(); }
 
