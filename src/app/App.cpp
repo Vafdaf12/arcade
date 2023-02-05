@@ -13,7 +13,7 @@
 #include "shapes/Triangle.h"
 
 #include "games/Game.h"
-#include "games/breakout/Breakout.h"
+#include "games/tetris/Tetris.h"
 
 App& App::Singleton() {
     static App app;
@@ -28,7 +28,7 @@ bool App::init(uint32_t width, uint32_t height, uint32_t mag) {
 
     // TEMP
     {
-        auto breakout = std::make_unique<Breakout>();
+        auto breakout = std::make_unique<Tetris>();
         auto breakoutScene = std::make_unique<GameScene>(std::move(breakout));
         pushScene(std::move(breakoutScene));
     }

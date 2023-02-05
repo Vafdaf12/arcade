@@ -24,6 +24,7 @@ file(GLOB SRCFILES
     src/input/*.cpp
     src/games/*.cpp
     src/games/breakout/*.cpp
+    src/games/tetris/*.cpp
     src/*.cpp
 )
 
