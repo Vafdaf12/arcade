@@ -27,6 +27,7 @@ public:
     static InputKey KEY_RIGHT;
     static InputKey KEY_UP;
     static InputKey KEY_DOWN;
+    static InputKey KEY_SPACE;
 
     static MouseButton MOUSE_BUTTON_LEFT;
     static MouseButton MOUSE_BUTTON_RIGHT;

@@ -1,4 +1,5 @@
 #include "GameController.h"
+#include "SDL_keycode.h"
 
 #include <SDL.h>
 
@@ -40,6 +41,7 @@ InputKey GameController::KEY_LEFT(static_cast<InputKey>(SDLK_LEFT));
 InputKey GameController::KEY_RIGHT(static_cast<InputKey>(SDLK_RIGHT));
 InputKey GameController::KEY_UP(static_cast<InputKey>(SDLK_UP));
 InputKey GameController::KEY_DOWN(static_cast<InputKey>(SDLK_DOWN));
+InputKey GameController::KEY_SPACE(static_cast<InputKey>(SDLK_SPACE));
 
 MouseButton GameController::MOUSE_BUTTON_LEFT(static_cast<MouseButton>(SDL_BUTTON_LEFT));
 MouseButton GameController::MOUSE_BUTTON_RIGHT(static_cast<MouseButton>(SDL_BUTTON_RIGHT));
