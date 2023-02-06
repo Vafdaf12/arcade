@@ -22,6 +22,8 @@ public:
     const std::string& getName() const override;
 
 private:
+    bool canMove(const Tetromino& tetromino, int dx, int dy) const;
+    bool canRotate(const Tetromino& tetromino, bool clockwise = false) const;
 
     Playfield m_playfield;
     Tetromino m_tetromino;

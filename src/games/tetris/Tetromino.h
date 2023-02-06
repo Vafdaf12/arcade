@@ -22,6 +22,8 @@ public:
     void rotate(bool clockwise = false);
     void draw(Screen& screen, const Playfield& field) const;
 
+    inline void move(int x, int y) { m_offset += {x, y}; }
+
     std::array<FieldPosition, 4> getCells() const;
 
 private:

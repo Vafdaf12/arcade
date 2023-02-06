@@ -7,55 +7,40 @@
 Tetris::Tetris() : m_playfield(AARectangle(), 0, 0) {}
 
 void Tetris::init(GameController& controller) {
-    ButtonAction spaceAction;
-    spaceAction.key = GameController::KEY_SPACE;
-    spaceAction.action = [this](uint32_t dt, InputState state) {
-        if (GameController::isPressed(state)) {
-            uint32_t score = m_playfield.clearLines();
-            std::cout << "Cleared Lines: " << score << "\n";
-        }
-    };
-
     ButtonAction leftKeyAction;
     leftKeyAction.key = GameController::KEY_LEFT;
     leftKeyAction.action = [this](uint32_t dt, InputState state) {
-        if (GameController::isPressed(state)) {
-            m_tetromino.rotate();
-            // move tetromino left
-        }
+        if (!GameController::isPressed(state)) return;
+        if (!canMove(m_tetromino, -1, 0)) return;
+        m_tetromino.move(-1, 0);
     };
-    /*
-
-    ButtonAction actionKeyAction;
-    actionKeyAction.key = GameController::KEY_ACTION;
-    actionKeyAction.action = [this](uint32_t dt, InputState state) {
-        if (GameController::isPressed(state)) {
-            m_activeTetromino.rotate();
-        }
+    ButtonAction upKeyAction;
+    upKeyAction.key = GameController::KEY_UP;
+    upKeyAction.action = [this](uint32_t dt, InputState state) {
+        if (!GameController::isPressed(state)) return;
+        if (!canRotate(m_tetromino)) return;
+        m_tetromino.rotate();
     };
-    ButtonAction cancelKeyAction;
-    cancelKeyAction.key = GameController::KEY_CANCEL;
-    cancelKeyAction.action = [this](uint32_t dt, InputState state) {
-        if (GameController::isPressed(state)) {
-            m_activeTetromino.rotate(true);
-        }
+    ButtonAction downKeyAction;
+    downKeyAction.key = GameController::KEY_DOWN;
+    downKeyAction.action = [this](uint32_t dt, InputState state) {
+        if (!GameController::isPressed(state)) return;
+        if (!canMove(m_tetromino, 0, -1)) return;
+        m_tetromino.move(0, -1);
     };
 
     ButtonAction rightKeyAction;
     rightKeyAction.key = GameController::KEY_RIGHT;
     rightKeyAction.action = [this](uint32_t dt, InputState state) {
-        if (GameController::isPressed(state)) {
-            m_activeTetromino.move({Playfield::CELL_WIDTH, 0});
-        }
+        if (!GameController::isPressed(state)) return;
+        if (!canMove(m_tetromino, 1, 0)) return;
+        m_tetromino.move(1, 0);
     };
 
     controller.addAction(rightKeyAction);
-    controller.addAction(actionKeyAction);
-    controller.addAction(cancelKeyAction);
-    */
-
-    controller.addAction(spaceAction);
     controller.addAction(leftKeyAction);
+    controller.addAction(upKeyAction);
+    controller.addAction(downKeyAction);
 
     App& app = App::Singleton();
     AARectangle boundary = AARectangle(
@@ -75,14 +60,28 @@ void Tetris::init(GameController& controller) {
     m_playfield.place(2, 1, Color::BLUE);
     m_playfield.place(3, 3, Color::ORANGE);
 
-    m_tetromino = Tetromino({
-            FieldPosition(0, 0),
-            FieldPosition(1, 0),
-            FieldPosition(2, 0),
-            FieldPosition(0, 1)
-        },
+    m_tetromino = Tetromino({FieldPosition(0, 0),
+                                FieldPosition(1, 0),
+                                FieldPosition(2, 0),
+                                FieldPosition(0, 1)},
         {1, 0},
-        Color::CYAN, {5, 5});
+        Color::CYAN,
+        {5, 5});
+}
+
+bool Tetris::canMove(const Tetromino& tetromino, int dx, int dy) const {
+    for (const auto& cell : tetromino.getCells()) {
+        if (!m_playfield.canPlace(cell.x + dx, cell.y + dy)) return false;
+    }
+    return true;
+}
+bool Tetris::canRotate(const Tetromino& tetromino, bool clockwise) const {
+    Tetromino next = tetromino;
+    next.rotate(clockwise);
+    for (const auto& cell : next.getCells()) {
+        if (!m_playfield.canPlace(cell.x, cell.y)) return false;
+    }
+    return true;
 }
 
 void Tetris::update(uint32_t dt) {}
