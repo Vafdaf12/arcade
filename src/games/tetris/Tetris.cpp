@@ -20,13 +20,20 @@ void Tetris::init(GameController& controller) {
         if (!GameController::isPressed(state)) return;
         if (!canRotate(m_tetromino)) return;
         m_tetromino.rotate();
+        m_fallTimer.reset();
     };
     ButtonAction downKeyAction;
     downKeyAction.key = GameController::KEY_DOWN;
     downKeyAction.action = [this](uint32_t dt, InputState state) {
         if (!GameController::isPressed(state)) return;
-        if (!canMove(m_tetromino, 0, -1)) return;
-        m_tetromino.move(0, -1);
+        if (!canMove(m_tetromino, 0, -1)) {
+            placeTetromino(m_tetromino);
+            resetActiveTetromino();
+            m_tetromino.move(0, 10);
+        } else {
+            m_tetromino.move(0, -1);
+        }
+        m_fallTimer.reset();
     };
 
     ButtonAction rightKeyAction;
@@ -66,7 +73,9 @@ void Tetris::init(GameController& controller) {
                                 FieldPosition(0, 1)},
         {1, 0},
         Color::CYAN,
-        {5, 5});
+        {5, 10});
+
+    m_fallTimer = Timer(1000);
 }
 
 bool Tetris::canMove(const Tetromino& tetromino, int dx, int dy) const {
@@ -83,9 +92,28 @@ bool Tetris::canRotate(const Tetromino& tetromino, bool clockwise) const {
     }
     return true;
 }
+void Tetris::placeTetromino(const Tetromino& tetromino) {
+    for (const auto& cell : tetromino.getCells()) {
+        m_playfield.place(cell.x, cell.y, tetromino.getColor());
+    }
+}
 
-void Tetris::update(uint32_t dt) {}
+void Tetris::update(uint32_t dt) {
+    m_fallTimer.update(dt);
 
+    if (m_fallTimer.elapsed()) {
+        m_fallTimer.reset();
+        if (canMove(m_tetromino, 0, -1)) {
+            m_tetromino.move(0, -1);
+        } else {
+            placeTetromino(m_tetromino);
+            resetActiveTetromino();
+        }
+    }
+}
+void Tetris::resetActiveTetromino() {
+    m_tetromino.move(0, 10);
+}
 void Tetris::draw(Screen& screen) {
     m_playfield.draw(screen);
     m_tetromino.draw(screen, m_playfield);

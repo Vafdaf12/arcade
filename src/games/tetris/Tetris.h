@@ -24,7 +24,10 @@ public:
 private:
     bool canMove(const Tetromino& tetromino, int dx, int dy) const;
     bool canRotate(const Tetromino& tetromino, bool clockwise = false) const;
+    void placeTetromino(const Tetromino& tetromino);
+    void resetActiveTetromino();
 
     Playfield m_playfield;
     Tetromino m_tetromino;
+    Timer m_fallTimer;
 };
