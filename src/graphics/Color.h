@@ -21,6 +21,21 @@ public:
 
     uint8_t red, green, blue, alpha;
 
+    // -- STATIC COLOR FUNCTIONS ---
+    static Color Black();
+    static Color White();
+
+    static Color Red();
+    static Color Green();
+    static Color Blue();
+
+    static Color Yellow();
+    static Color Magenta();
+    static Color Cyan();
+    static Color Pink();
+    static Color Orange();
+
+    // --- STATIC COLORS ---
     static Color BLACK;
     static Color WHITE;
 

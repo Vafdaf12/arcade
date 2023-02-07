@@ -14,6 +14,19 @@ Color Color::CYAN(37, 240, 217);
 Color Color::PINK(252, 197, 224);
 Color Color::ORANGE(245, 190, 100);
 
+Color Color::Black() { return Color(0, 0, 0); }
+Color Color::White() { return Color(255, 255, 255); }
+
+Color Color::Red() { return Color(255, 0, 0); }
+Color Color::Green() { return Color(0, 255, 0); }
+Color Color::Blue() { return Color(0, 0, 255); }
+
+Color Color::Yellow() { return Color(255, 255, 0); }
+Color Color::Magenta() { return Color(255, 0, 255); }
+Color Color::Cyan() { return Color(37, 240, 217); }
+Color Color::Pink() { return Color(252, 197, 224); }
+Color Color::Orange() { return Color(245, 190, 100); }
+
 Color Color::blendColors(const Color& src, const Color& dst) {
     uint8_t alpha = src.alpha;
 
@@ -28,9 +41,9 @@ Color Color::blendColors(const Color& src, const Color& dst) {
 
     return out;
 }
-Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-    set(r, g, b, a);
-}
+
+Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+    : red(r), green(g), blue(b), alpha(a) {}
 
 void Color::set(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     red = r;
