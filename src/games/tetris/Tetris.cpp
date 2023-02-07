@@ -21,8 +21,8 @@ void Tetris::init(GameController& controller) {
         if (!GameController::isPressed(state)) return;
         if (!canRotate(m_tetromino)) return;
         m_tetromino.rotate();
-        m_fallTimer.reset();
     };
+
     ButtonAction downKeyAction;
     downKeyAction.key = GameController::KEY_DOWN;
     downKeyAction.action = [this](uint32_t dt, InputState state) {
@@ -30,7 +30,6 @@ void Tetris::init(GameController& controller) {
         if (!canMove(m_tetromino, 0, -1)) {
             placeTetromino(m_tetromino);
             resetActiveTetromino();
-            m_tetromino.move(0, 10);
         } else {
             m_tetromino.move(0, -1);
         }
