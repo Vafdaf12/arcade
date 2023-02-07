@@ -29,5 +29,7 @@ private:
 
     Playfield m_playfield;
     Tetromino m_tetromino;
+    std::array<Tetromino, 7> m_availableTetrominos;
+
     Timer m_fallTimer;
 };

@@ -44,3 +44,58 @@ std::array<FieldPosition, 4> Tetromino::getCells() const {
         [this](const FieldPosition& pos) { return pos + m_offset; });
     return cells;
 }
+Tetromino Tetromino::SHAPE_I({
+    FieldPosition(0, 0),
+    FieldPosition(1, 0),
+    FieldPosition(2, 0),
+    FieldPosition(3, 0)},
+    {1.5f, -0.5f},
+    Color::Cyan());
+
+Tetromino Tetromino::SHAPE_J({
+    FieldPosition(0, 0),
+    FieldPosition(1, 0),
+    FieldPosition(2, 0),
+    FieldPosition(0, 1)},
+    {1, 0},
+    Color::Blue());
+
+Tetromino Tetromino::SHAPE_L({
+    FieldPosition(0, 0),
+    FieldPosition(1, 0),
+    FieldPosition(2, 0),
+    FieldPosition(2, 1)},
+    {1, 0},
+    Color::Orange());
+
+Tetromino Tetromino::SHAPE_O({
+    FieldPosition(0, 0),
+    FieldPosition(1, 0),
+    FieldPosition(1, 1),
+    FieldPosition(0, 1)},
+    {1.5f, 0.5f},
+    Color::Yellow());
+
+Tetromino Tetromino::SHAPE_S({
+    FieldPosition(0, 0),
+    FieldPosition(1, 0),
+    FieldPosition(1, 1),
+    FieldPosition(2, 1)},
+    {1, 0},
+    Color::Green());
+
+Tetromino Tetromino::SHAPE_T({
+    FieldPosition(0, 0),
+    FieldPosition(1, 0),
+    FieldPosition(2, 0),
+    FieldPosition(1, 1)},
+    {1, 0},
+    Color::Magenta());
+
+Tetromino Tetromino::SHAPE_Z({
+    FieldPosition(0, 1),
+    FieldPosition(1, 1),
+    FieldPosition(1, 0),
+    FieldPosition(2, 0)},
+    {1, 0},
+    Color::Red());

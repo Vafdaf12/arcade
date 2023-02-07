@@ -1,6 +1,7 @@
 #include "Tetris.h"
 
 #include "app/App.h"
+#include "./Tetromino.h"
 #include "input/GameController.h"
 #include "input/InputAction.h"
 
@@ -67,13 +68,17 @@ void Tetris::init(GameController& controller) {
     m_playfield.place(2, 1, Color::BLUE);
     m_playfield.place(3, 3, Color::ORANGE);
 
-    m_tetromino = Tetromino({FieldPosition(0, 0),
-                                FieldPosition(1, 0),
-                                FieldPosition(2, 0),
-                                FieldPosition(0, 1)},
-        {1, 0},
-        Color::CYAN,
-        {5, 10});
+
+    std::array<Tetromino, 7> m_availableTetrominos = {
+        Tetromino::SHAPE_I,
+        Tetromino::SHAPE_L,
+        Tetromino::SHAPE_J,
+        Tetromino::SHAPE_O,
+        Tetromino::SHAPE_T,
+        Tetromino::SHAPE_Z,
+        Tetromino::SHAPE_S
+    };
+    m_tetromino = m_availableTetrominos[5];
 
     m_fallTimer = Timer(1000);
 }
