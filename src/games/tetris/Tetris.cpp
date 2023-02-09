@@ -4,6 +4,8 @@
 #include "./Tetromino.h"
 #include "input/GameController.h"
 #include "input/InputAction.h"
+#include <cstdlib>
+#include <ctime>
 
 Tetris::Tetris() : m_playfield(AARectangle(), 0, 0) {}
 
@@ -117,8 +119,11 @@ void Tetris::update(uint32_t dt) {
             resetActiveTetromino();
         }
     }
+    m_playfield.clearLines();
 }
 void Tetris::resetActiveTetromino() {
+    int i = rand() % m_availableTetrominos.size();
+    m_tetromino = m_availableTetrominos[i];
     m_tetromino.move(0, 10);
 }
 void Tetris::draw(Screen& screen) {
