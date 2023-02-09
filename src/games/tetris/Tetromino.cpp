@@ -44,6 +44,27 @@ std::array<FieldPosition, 4> Tetromino::getCells() const {
         [this](const FieldPosition& pos) { return pos + m_offset; });
     return cells;
 }
+
+int Tetromino::width() const {
+    int xMin = m_cells[0].x;
+    int xMax = m_cells[0].x;
+    for(size_t i = 1; i < m_cells.size(); i++) {
+        if(m_cells[i].x > xMax) xMax = m_cells[i].x;
+        if(m_cells[i].x < xMin) xMin = m_cells[i].x;
+    }
+
+    return xMax - xMin;
+}
+int Tetromino::height() const {
+    int yMin = m_cells[0].y;
+    int yMax = m_cells[0].y;
+    for(size_t i = 1; i < m_cells.size(); i++) {
+        if(m_cells[i].y > yMax) yMax = m_cells[i].y;
+        if(m_cells[i].y < yMin) yMin = m_cells[i].y;
+    }
+
+    return yMax - yMin;
+}
 Tetromino Tetromino::SHAPE_I({
     FieldPosition(0, 0),
     FieldPosition(1, 0),

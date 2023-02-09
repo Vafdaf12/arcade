@@ -28,6 +28,9 @@ public:
 
     std::array<FieldPosition, 4> getCells() const;
 
+    int width() const;
+    int height() const;
+
     static Tetromino SHAPE_I;
     static Tetromino SHAPE_J;
     static Tetromino SHAPE_L;

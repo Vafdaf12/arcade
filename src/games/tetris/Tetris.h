@@ -9,6 +9,8 @@
 #include "shapes/AARectangle.h"
 #include <cstddef>
 
+#include <array>
+
 class Tetris : public Game {
 public:
     static constexpr size_t FIELD_WIDTH = 10;
@@ -22,6 +24,7 @@ public:
     const std::string& getName() const override;
 
 private:
+    bool canPlace(const Tetromino& tetromino) const;
     bool canMove(const Tetromino& tetromino, int dx, int dy) const;
     bool canRotate(const Tetromino& tetromino, bool clockwise = false) const;
     void placeTetromino(const Tetromino& tetromino);
@@ -30,7 +33,7 @@ private:
 
     Playfield m_playfield;
     Tetromino m_tetromino;
-    std::array<Tetromino, 7> m_availableTetrominos;
+    std::array<std::pair<Tetromino, FieldPosition>, 7> m_availableTetrominos;
 
     Timer m_fallTimer;
 };

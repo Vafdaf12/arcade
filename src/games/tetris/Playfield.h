@@ -28,6 +28,8 @@ public:
 
     inline const AARectangle& getBoundingBox() const { return m_boundary; }
 
+    inline size_t width() const { return m_width; }
+    inline size_t height() const { return m_height; }
 
 private:
     bool isRowComplete(int y) const;
