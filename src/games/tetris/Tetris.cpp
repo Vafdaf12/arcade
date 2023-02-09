@@ -1,13 +1,15 @@
 #include "Tetris.h"
 
-#include "app/App.h"
 #include "./Tetromino.h"
+#include "app/App.h"
 #include "input/GameController.h"
 #include "input/InputAction.h"
+
 #include <cstdlib>
 #include <ctime>
 
-Tetris::Tetris() : m_playfield(AARectangle(), 0, 0) {}
+Tetris::Tetris()
+    : m_playfield(AARectangle(), 0, 0), m_nextField(AARectangle(), 0, 0) {}
 
 void Tetris::init(GameController& controller) {
     ButtonAction dropAction;
@@ -16,9 +18,9 @@ void Tetris::init(GameController& controller) {
         if (!GameController::isPressed(state)) return;
         auto dropped = dropTetromino(m_tetromino);
         placeTetromino(dropped);
-        resetActiveTetromino();
+        nextTetromino();
     };
-         
+
     ButtonAction leftKeyAction;
     leftKeyAction.key = GameController::KEY_LEFT;
     leftKeyAction.action = [this](uint32_t dt, InputState state) {
@@ -40,7 +42,7 @@ void Tetris::init(GameController& controller) {
         if (!GameController::isPressed(state)) return;
         if (!canMove(m_tetromino, 0, -1)) {
             placeTetromino(m_tetromino);
-            resetActiveTetromino();
+            nextTetromino();
         } else {
             m_tetromino.move(0, -1);
         }
@@ -70,7 +72,13 @@ void Tetris::init(GameController& controller) {
 
     boundary.setPosition(pos);
 
+    AARectangle nextField(
+        Vector2::ZERO, Playfield::CELL_WIDTH * 4, Playfield::CELL_WIDTH * 4);
+    nextField.setPosition(
+        boundary.getTopLeft() + Vector2(boundary.getWidth() + 3, 0));
+
     m_playfield = Playfield(boundary, FIELD_WIDTH, FIELD_HEIGHT);
+    m_nextField = Playfield(nextField, 4, 4);
 
     for (size_t i = 0; i < FIELD_WIDTH; i++) {
         m_playfield.place(i, 0, Color::YELLOW);
@@ -79,7 +87,7 @@ void Tetris::init(GameController& controller) {
     m_playfield.place(2, 1, Color::BLUE);
     m_playfield.place(3, 3, Color::ORANGE);
 
-    std::array<Tetromino, 7> tetrominos = {
+    m_availableTetrominos = {
         Tetromino::SHAPE_I,
         Tetromino::SHAPE_L,
         Tetromino::SHAPE_J,
@@ -88,18 +96,8 @@ void Tetris::init(GameController& controller) {
         Tetromino::SHAPE_Z,
         Tetromino::SHAPE_S,
     };
-
-    for(size_t i = 0; i < tetrominos.size(); i++) {
-        const Tetromino& t = tetrominos[i];
-        int x = (m_playfield.width() - t.width()) / 2;
-        int y = (m_playfield.height() - t.height()) - 1;
-
-        m_availableTetrominos[i].first = t;
-        m_availableTetrominos[i].second = {x, y};
-    }
-
-    m_tetromino = m_availableTetrominos[1].first;
-    m_tetromino.move(m_availableTetrominos[1].second.x, m_availableTetrominos[1].second.y);
+    m_nextTetromino = m_availableTetrominos[1];
+    nextTetromino();
 
     m_fallTimer = Timer(1000);
 
@@ -135,21 +133,29 @@ void Tetris::update(uint32_t dt) {
             m_tetromino.move(0, -1);
         } else {
             placeTetromino(m_tetromino);
-            resetActiveTetromino();
+            nextTetromino();
         }
     }
     m_playfield.clearLines();
 }
-void Tetris::resetActiveTetromino() {
-    int i = rand() % m_availableTetrominos.size();
-    auto nextTetromino = m_availableTetrominos[i];
 
-    m_tetromino = nextTetromino.first;
-    m_tetromino.move(nextTetromino.second.x, nextTetromino.second.y);
+void Tetris::nextTetromino() {
+    // place new tetromino at correct spawn position
+    m_tetromino = m_nextTetromino;
+    int x = (m_playfield.width() - m_tetromino.width()) / 2;
+    int y = (m_playfield.height() - m_tetromino.height()) - 1;
+    m_tetromino.setOffset(x, y);
+
+    // select new tetromino
+    int i = rand() % m_availableTetrominos.size();
+    m_nextTetromino = m_availableTetrominos[i];
+    m_nextTetromino.move(1, 0);
 }
+
 Tetromino Tetris::dropTetromino(const Tetromino& tetromino) const {
     Tetromino dropped = tetromino;
-    while(canMove(dropped, 0, -1)) dropped.move(0, -1);
+    while (canMove(dropped, 0, -1))
+        dropped.move(0, -1);
     return dropped;
 }
 
@@ -157,6 +163,7 @@ void Tetris::draw(Screen& screen) {
     m_playfield.draw(screen);
     m_tetromino.draw(screen, m_playfield);
 
+    m_nextTetromino.draw(screen, m_nextField);
 }
 
 const std::string& Tetris::getName() const {

@@ -31,6 +31,7 @@ void Tetromino::rotate(bool clockwise) {
 void Tetromino::draw(Screen& screen, const Playfield& field) const {
     for (const auto& cell : m_cells) {
         FieldPosition absolute = cell + m_offset;
+        if(!field.canPlace(absolute.x, absolute.y)) continue;
         AARectangle rect = field.getCell(absolute.x, absolute.y);
         screen.draw(rect, m_color, true, m_color);
     }

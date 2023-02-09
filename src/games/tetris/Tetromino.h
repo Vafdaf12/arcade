@@ -25,6 +25,7 @@ public:
     inline const Color& getColor() const { return m_color; }
 
     inline void move(int x, int y) { m_offset += {x, y}; }
+    inline void setOffset(int x, int y) { m_offset = {x, y}; }
 
     std::array<FieldPosition, 4> getCells() const;
 

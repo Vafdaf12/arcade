@@ -28,12 +28,17 @@ private:
     bool canMove(const Tetromino& tetromino, int dx, int dy) const;
     bool canRotate(const Tetromino& tetromino, bool clockwise = false) const;
     void placeTetromino(const Tetromino& tetromino);
-    void resetActiveTetromino();
+
+    void nextTetromino();
     Tetromino dropTetromino(const Tetromino& tetromino) const; 
 
     Playfield m_playfield;
+    Playfield m_nextField;
+
     Tetromino m_tetromino;
-    std::array<std::pair<Tetromino, FieldPosition>, 7> m_availableTetrominos;
+    Tetromino m_nextTetromino;
+
+    std::array<Tetromino, 7> m_availableTetrominos;
 
     Timer m_fallTimer;
 };
