@@ -68,7 +68,7 @@ void Tetris::init(GameController& controller) {
     m_playfield.place(3, 3, Color::ORANGE);
 
 
-    std::array<Tetromino, 7> m_availableTetrominos = {
+    m_availableTetrominos = {
         Tetromino::SHAPE_I,
         Tetromino::SHAPE_L,
         Tetromino::SHAPE_J,
@@ -77,9 +77,12 @@ void Tetris::init(GameController& controller) {
         Tetromino::SHAPE_Z,
         Tetromino::SHAPE_S
     };
-    m_tetromino = m_availableTetrominos[5];
+    m_tetromino = m_availableTetrominos[1];
+    m_tetromino.move(0, 10);
 
     m_fallTimer = Timer(1000);
+
+    srand(time(NULL));
 }
 
 bool Tetris::canMove(const Tetromino& tetromino, int dx, int dy) const {
