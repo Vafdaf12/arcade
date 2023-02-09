@@ -26,6 +26,7 @@ private:
     bool canRotate(const Tetromino& tetromino, bool clockwise = false) const;
     void placeTetromino(const Tetromino& tetromino);
     void resetActiveTetromino();
+    Tetromino dropTetromino(const Tetromino& tetromino) const; 
 
     Playfield m_playfield;
     Tetromino m_tetromino;

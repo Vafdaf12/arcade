@@ -10,6 +10,15 @@
 Tetris::Tetris() : m_playfield(AARectangle(), 0, 0) {}
 
 void Tetris::init(GameController& controller) {
+    ButtonAction dropAction;
+    dropAction.key = GameController::KEY_ACTION;
+    dropAction.action = [this](uint32_t dt, InputState state) {
+        if (!GameController::isPressed(state)) return;
+        auto dropped = dropTetromino(m_tetromino);
+        placeTetromino(dropped);
+        resetActiveTetromino();
+    };
+         
     ButtonAction leftKeyAction;
     leftKeyAction.key = GameController::KEY_LEFT;
     leftKeyAction.action = [this](uint32_t dt, InputState state) {
@@ -50,6 +59,7 @@ void Tetris::init(GameController& controller) {
     controller.addAction(leftKeyAction);
     controller.addAction(upKeyAction);
     controller.addAction(downKeyAction);
+    controller.addAction(dropAction);
 
     App& app = App::Singleton();
     AARectangle boundary = AARectangle(
@@ -126,6 +136,12 @@ void Tetris::resetActiveTetromino() {
     m_tetromino = m_availableTetrominos[i];
     m_tetromino.move(0, 10);
 }
+Tetromino Tetris::dropTetromino(const Tetromino& tetromino) const {
+    Tetromino dropped = tetromino;
+    while(canMove(dropped, 0, -1)) dropped.move(0, -1);
+    return dropped;
+}
+
 void Tetris::draw(Screen& screen) {
     m_playfield.draw(screen);
     m_tetromino.draw(screen, m_playfield);
