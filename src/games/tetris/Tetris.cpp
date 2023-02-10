@@ -8,7 +8,6 @@
 #include <cstdlib>
 #include <ctime>
 #include <random>
-#include <ctime>
 
 Tetris::Tetris()
     : m_playfield(AARectangle(), 0, 0), m_nextField(AARectangle(), 0, 0) {}
@@ -73,21 +72,23 @@ void Tetris::init(GameController& controller) {
     controller.addAction(dropAction);
 
     App& app = App::Singleton();
-    AARectangle boundary = AARectangle(
-        Vector2::ZERO, Playfield::CELL_WIDTH * 10, Playfield::CELL_WIDTH * 20);
 
-    Vector2 pos = {(app.width() - boundary.getWidth()) / 2.0f,
+    AARectangle boundary = AARectangle(Vector2::ZERO,
+        Playfield::CELL_WIDTH * FIELD_WIDTH,
+        Playfield::CELL_WIDTH * FIELD_HEIGHT);
+    AARectangle nextField(
+        Vector2::ZERO, Playfield::CELL_WIDTH * 6, Playfield::CELL_WIDTH * 6);
+
+    Vector2 pos = {
+        (app.width() - boundary.getWidth() - nextField.getWidth()) / 2.0f,
         (app.height() - boundary.getHeight()) / 2.0f};
 
     boundary.setPosition(pos);
 
-    AARectangle nextField(
-        Vector2::ZERO, Playfield::CELL_WIDTH * 4, Playfield::CELL_WIDTH * 4);
-    nextField.setPosition(
-        boundary.getTopLeft() + Vector2(boundary.getWidth() + 3, 0));
+    nextField.setPosition(boundary.getTopLeft() + Vector2(boundary.getWidth() + 3, 0));
 
     m_playfield = Playfield(boundary, FIELD_WIDTH, FIELD_HEIGHT);
-    m_nextField = Playfield(nextField, 4, 4);
+    m_nextField = Playfield(nextField, 6, 6);
 
     m_availableTetrominos = {
         Tetromino::SHAPE_I,
@@ -178,6 +179,10 @@ void Tetris::nextTetromino() {
     // select new tetromino
     m_nextTetromino = m_availableTetrominos[m_rand(m_randomEngine)];
     m_nextTetromino.setOffset(1, 0);
+    m_nextTetromino.setOffset(
+        (m_nextField.width() - m_nextTetromino.width()) / 2,
+        (m_nextField.height() - m_nextTetromino.height()) / 2
+    );
 }
 
 Tetromino Tetris::dropTetromino(const Tetromino& tetromino) const {
@@ -192,6 +197,7 @@ void Tetris::draw(Screen& screen) {
     m_tetromino.draw(screen, m_playfield);
 
     m_nextTetromino.draw(screen, m_nextField);
+    m_nextField.draw(screen);
 }
 
 const std::string& Tetris::getName() const {
