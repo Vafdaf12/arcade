@@ -85,7 +85,8 @@ void Tetris::init(GameController& controller) {
 
     boundary.setPosition(pos);
 
-    nextField.setPosition(boundary.getTopLeft() + Vector2(boundary.getWidth() + 3, 0));
+    nextField.setPosition(
+        boundary.getTopLeft() + Vector2(boundary.getWidth() + 3, 0));
 
     m_playfield = Playfield(boundary, FIELD_WIDTH, FIELD_HEIGHT);
     m_nextField = Playfield(nextField, 6, 6);
@@ -101,7 +102,8 @@ void Tetris::init(GameController& controller) {
     };
 
     m_randomEngine = std::default_random_engine(time(0));
-    m_rand = std::uniform_int_distribution<int>(0, m_availableTetrominos.size() - 1);
+    m_rand =
+        std::uniform_int_distribution<int>(0, m_availableTetrominos.size() - 1);
 
     resetGame();
 }
@@ -117,7 +119,7 @@ void Tetris::resetGame() {
 
     // reset game state
     m_state = Playing;
-    // m_score = 0
+    m_score = 0;
 
     // reset playing tetrominos
     m_nextTetromino = m_availableTetrominos[m_rand(m_randomEngine)];
@@ -166,7 +168,15 @@ void Tetris::update(uint32_t dt) {
             nextTetromino();
         }
     }
-    m_playfield.clearLines();
+    uint32_t nLines = m_playfield.clearLines();
+    if (nLines == 0) return;
+
+    uint32_t score = 100;
+    for (uint32_t i = 1; i < nLines; i++)
+        score *= 2;
+    if (nLines == 4) score += 1000;
+
+    m_score += score;
 }
 
 void Tetris::nextTetromino() {
@@ -181,8 +191,7 @@ void Tetris::nextTetromino() {
     m_nextTetromino.setOffset(1, 0);
     m_nextTetromino.setOffset(
         (m_nextField.width() - m_nextTetromino.width()) / 2,
-        (m_nextField.height() - m_nextTetromino.height()) / 2
-    );
+        (m_nextField.height() - m_nextTetromino.height()) / 2);
 }
 
 Tetromino Tetris::dropTetromino(const Tetromino& tetromino) const {

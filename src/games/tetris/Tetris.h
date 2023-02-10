@@ -53,6 +53,7 @@ private:
     Timer m_fallTimer;
 
     GameState m_state;
+    uint32_t m_score;
 
     std::default_random_engine m_randomEngine;
     std::uniform_int_distribution<int> m_rand;
