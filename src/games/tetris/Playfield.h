@@ -6,7 +6,6 @@
 
 #include <stdint.h>
 #include <vector>
-#include <optional>
 
 class Screen;
 
@@ -20,6 +19,8 @@ public:
     void update(uint32_t dt) const;
 
     void place(int x, int y, const Color& color);
+    void clear();
+
     bool canPlace(int x, int y) const;
 
     const AARectangle& getCell(int x, int y) const;

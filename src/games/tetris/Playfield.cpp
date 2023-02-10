@@ -34,6 +34,11 @@ void Playfield::place(int x, int y, const Color& color) {
     m_cells[i].setActive(true);
     m_cells[i].setColor(color);
 }
+void Playfield::clear() {
+    for(size_t i = 0; i < m_cells.size(); i++) {
+        m_cells[i].setActive(false);
+    }
+}
 bool Playfield::canPlace(int x, int y) const {
     if(x < 0 || x >= m_width) return false;
     if(y < 0 || y >= m_height) return false;

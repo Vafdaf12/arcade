@@ -13,6 +13,11 @@
 
 class Tetris : public Game {
 public:
+    enum GameState {
+        Playing,
+        GameOver
+    };
+
     static constexpr size_t FIELD_WIDTH = 10;
     static constexpr size_t FIELD_HEIGHT = 20;
 
@@ -24,9 +29,13 @@ public:
     const std::string& getName() const override;
 
 private:
+    void resetGame();
+
+    inline bool isGameOver() const { return m_state == GameOver; }
     bool canPlace(const Tetromino& tetromino) const;
     bool canMove(const Tetromino& tetromino, int dx, int dy) const;
     bool canRotate(const Tetromino& tetromino, bool clockwise = false) const;
+
     void placeTetromino(const Tetromino& tetromino);
 
     void nextTetromino();
@@ -41,4 +50,6 @@ private:
     std::array<Tetromino, 7> m_availableTetrominos;
 
     Timer m_fallTimer;
+
+    GameState m_state;
 };

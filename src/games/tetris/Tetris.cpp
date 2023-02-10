@@ -16,14 +16,18 @@ void Tetris::init(GameController& controller) {
     dropAction.key = GameController::KEY_ACTION;
     dropAction.action = [this](uint32_t dt, InputState state) {
         if (!GameController::isPressed(state)) return;
-        auto dropped = dropTetromino(m_tetromino);
-        placeTetromino(dropped);
-        nextTetromino();
+        if (isGameOver()) resetGame();
+        else {
+            auto dropped = dropTetromino(m_tetromino);
+            placeTetromino(dropped);
+            nextTetromino();
+        }
     };
 
     ButtonAction leftKeyAction;
     leftKeyAction.key = GameController::KEY_LEFT;
     leftKeyAction.action = [this](uint32_t dt, InputState state) {
+        if (isGameOver()) return;
         if (!GameController::isPressed(state)) return;
         if (!canMove(m_tetromino, -1, 0)) return;
         m_tetromino.move(-1, 0);
@@ -31,6 +35,7 @@ void Tetris::init(GameController& controller) {
     ButtonAction upKeyAction;
     upKeyAction.key = GameController::KEY_UP;
     upKeyAction.action = [this](uint32_t dt, InputState state) {
+        if (isGameOver()) return;
         if (!GameController::isPressed(state)) return;
         if (!canRotate(m_tetromino)) return;
         m_tetromino.rotate();
@@ -39,6 +44,7 @@ void Tetris::init(GameController& controller) {
     ButtonAction downKeyAction;
     downKeyAction.key = GameController::KEY_DOWN;
     downKeyAction.action = [this](uint32_t dt, InputState state) {
+        if (isGameOver()) return;
         if (!GameController::isPressed(state)) return;
         if (!canMove(m_tetromino, 0, -1)) {
             placeTetromino(m_tetromino);
@@ -52,6 +58,7 @@ void Tetris::init(GameController& controller) {
     ButtonAction rightKeyAction;
     rightKeyAction.key = GameController::KEY_RIGHT;
     rightKeyAction.action = [this](uint32_t dt, InputState state) {
+        if (isGameOver()) return;
         if (!GameController::isPressed(state)) return;
         if (!canMove(m_tetromino, 1, 0)) return;
         m_tetromino.move(1, 0);
@@ -96,12 +103,34 @@ void Tetris::init(GameController& controller) {
         Tetromino::SHAPE_Z,
         Tetromino::SHAPE_S,
     };
-    m_nextTetromino = m_availableTetrominos[1];
-    nextTetromino();
-
-    m_fallTimer = Timer(1000);
 
     srand(time(NULL));
+    resetGame();
+}
+
+void Tetris::resetGame() {
+    // reset playfields
+    m_playfield.clear();
+    m_nextField.clear();
+
+    // reset timer duration
+    m_fallTimer.setDuration(1000);
+    m_fallTimer.reset();
+
+    // reset game state
+    m_state = Playing;
+    // m_score = 0
+
+    // reset playing tetrominos
+    nextTetromino();
+    nextTetromino();
+}
+
+bool Tetris::canPlace(const Tetromino& tetromino) const {
+    for (const auto& cell : tetromino.getCells()) {
+        if (!m_playfield.canPlace(cell.x, cell.y)) return false;
+    }
+    return true;
 }
 
 bool Tetris::canMove(const Tetromino& tetromino, int dx, int dy) const {
@@ -125,13 +154,16 @@ void Tetris::placeTetromino(const Tetromino& tetromino) {
 }
 
 void Tetris::update(uint32_t dt) {
+    if (isGameOver()) return;
     m_fallTimer.update(dt);
 
     if (m_fallTimer.elapsed()) {
         m_fallTimer.reset();
-        if (canMove(m_tetromino, 0, -1)) {
-            m_tetromino.move(0, -1);
-        } else {
+
+        if (canMove(m_tetromino, 0, -1)) m_tetromino.move(0, -1);
+        else if (!canPlace(m_tetromino)) m_state = GameOver;
+
+        else {
             placeTetromino(m_tetromino);
             nextTetromino();
         }
