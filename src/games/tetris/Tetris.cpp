@@ -204,6 +204,8 @@ Tetromino Tetris::dropTetromino(const Tetromino& tetromino) const {
 void Tetris::draw(Screen& screen) {
     m_playfield.draw(screen);
     m_tetromino.draw(screen, m_playfield);
+    Tetromino dropped = dropTetromino(m_tetromino);
+    dropped.draw(screen, m_playfield);
 
     m_nextTetromino.draw(screen, m_nextField);
     m_nextField.draw(screen);

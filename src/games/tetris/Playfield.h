@@ -11,7 +11,7 @@ class Screen;
 
 class Playfield {
 public:
-    static constexpr float CELL_WIDTH = 10;
+    static constexpr float CELL_WIDTH = 12;
 
     Playfield(const AARectangle& rect, size_t width, size_t height);
 
