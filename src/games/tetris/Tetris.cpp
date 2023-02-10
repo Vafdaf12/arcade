@@ -7,6 +7,8 @@
 
 #include <cstdlib>
 #include <ctime>
+#include <random>
+#include <ctime>
 
 Tetris::Tetris()
     : m_playfield(AARectangle(), 0, 0), m_nextField(AARectangle(), 0, 0) {}
@@ -104,7 +106,9 @@ void Tetris::init(GameController& controller) {
         Tetromino::SHAPE_S,
     };
 
-    srand(time(NULL));
+    m_randomEngine = std::default_random_engine(time(0));
+    m_rand = std::uniform_int_distribution<int>(0, m_availableTetrominos.size() - 1);
+
     resetGame();
 }
 
@@ -122,7 +126,7 @@ void Tetris::resetGame() {
     // m_score = 0
 
     // reset playing tetrominos
-    nextTetromino();
+    m_nextTetromino = m_availableTetrominos[m_rand(m_randomEngine)];
     nextTetromino();
 }
 
@@ -179,9 +183,8 @@ void Tetris::nextTetromino() {
     m_tetromino.setOffset(x, y);
 
     // select new tetromino
-    int i = rand() % m_availableTetrominos.size();
-    m_nextTetromino = m_availableTetrominos[i];
-    m_nextTetromino.move(1, 0);
+    m_nextTetromino = m_availableTetrominos[m_rand(m_randomEngine)];
+    m_nextTetromino.setOffset(1, 0);
 }
 
 Tetromino Tetris::dropTetromino(const Tetromino& tetromino) const {

@@ -10,6 +10,7 @@
 #include <cstddef>
 
 #include <array>
+#include <random>
 
 class Tetris : public Game {
 public:
@@ -52,4 +53,7 @@ private:
     Timer m_fallTimer;
 
     GameState m_state;
+
+    std::default_random_engine m_randomEngine;
+    std::uniform_int_distribution<int> m_rand;
 };
