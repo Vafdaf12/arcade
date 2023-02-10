@@ -89,13 +89,6 @@ void Tetris::init(GameController& controller) {
     m_playfield = Playfield(boundary, FIELD_WIDTH, FIELD_HEIGHT);
     m_nextField = Playfield(nextField, 4, 4);
 
-    for (size_t i = 0; i < FIELD_WIDTH; i++) {
-        m_playfield.place(i, 0, Color::YELLOW);
-        m_playfield.place(i, 2, Color::MAGENTA);
-    }
-    m_playfield.place(2, 1, Color::BLUE);
-    m_playfield.place(3, 3, Color::ORANGE);
-
     m_availableTetrominos = {
         Tetromino::SHAPE_I,
         Tetromino::SHAPE_L,
