@@ -95,7 +95,7 @@ Tetromino Tetromino::SHAPE_O({
     FieldPosition(1, 0),
     FieldPosition(1, 1),
     FieldPosition(0, 1)},
-    {1.5f, 0.5f},
+    {0.5f, 0.5f},
     Color::Yellow());
 
 Tetromino Tetromino::SHAPE_S({
