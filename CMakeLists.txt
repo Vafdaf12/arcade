@@ -36,6 +36,6 @@ add_executable(${NAME_EXE} ${SRCFILES})
 target_include_directories(${NAME_EXE}
     PRIVATE src/
 )
-target_link_libraries(${NAME_EXE} SDL2-static -static)
+target_link_libraries(${NAME_EXE} SDL2)
 
 
