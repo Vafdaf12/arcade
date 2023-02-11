@@ -6,6 +6,8 @@ include(FetchContent)
 
 set(NAME_EXE Arcade)
 
+set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
+
 # ------------ FETCH SDL2 ------------ 
 FetchContent_Declare(SDL2 
     GIT_REPOSITORY https://github.com/libsdl-org/SDL
@@ -34,6 +36,6 @@ add_executable(${NAME_EXE} ${SRCFILES})
 target_include_directories(${NAME_EXE}
     PRIVATE src/
 )
-target_link_libraries(${NAME_EXE} SDL2)
+target_link_libraries(${NAME_EXE} SDL2-static -static)
 
 

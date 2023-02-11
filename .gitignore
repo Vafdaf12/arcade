@@ -12,4 +12,5 @@ _deps
 
 # Build file
 build/
+build-*
 .cache/
