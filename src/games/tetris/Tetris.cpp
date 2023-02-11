@@ -31,6 +31,7 @@ void Tetris::init(GameController& controller) {
         if (isGameOver()) return;
         if (!GameController::isPressed(state)) return;
         if (!canMove(m_tetromino, -1, 0)) return;
+        m_placeTimer.reset();
         m_tetromino.move(-1, 0);
     };
     ButtonAction upKeyAction;
@@ -39,6 +40,7 @@ void Tetris::init(GameController& controller) {
         if (isGameOver()) return;
         if (!GameController::isPressed(state)) return;
         if (!canRotate(m_tetromino)) return;
+        m_placeTimer.reset();
         m_tetromino.rotate();
     };
 
@@ -62,6 +64,7 @@ void Tetris::init(GameController& controller) {
         if (isGameOver()) return;
         if (!GameController::isPressed(state)) return;
         if (!canMove(m_tetromino, 1, 0)) return;
+        m_placeTimer.reset();
         m_tetromino.move(1, 0);
     };
 
@@ -114,6 +117,7 @@ void Tetris::resetGame() {
     m_nextField.clear();
 
     // reset timer duration
+    m_placeTimer = Timer(1000);
     m_fallTimer.setDuration(1000);
     m_fallTimer.reset();
 
@@ -155,29 +159,32 @@ void Tetris::placeTetromino(const Tetromino& tetromino) {
 
 void Tetris::update(uint32_t dt) {
     if (isGameOver()) return;
-    m_fallTimer.update(dt);
+
+    if (!canMove(m_tetromino, 0, -1)) m_placeTimer.update(dt);
+    else m_fallTimer.update(dt);
+
+    if (m_placeTimer.elapsed()) {
+        m_placeTimer.reset();
+        m_fallTimer.reset();
+        placeTetromino(m_tetromino);
+        nextTetromino();
+    }
 
     if (m_fallTimer.elapsed()) {
         m_fallTimer.reset();
-
-        if (canMove(m_tetromino, 0, -1)) m_tetromino.move(0, -1);
-        else if (!canPlace(m_tetromino)) m_state = GameOver;
-
-        else {
-            placeTetromino(m_tetromino);
-            nextTetromino();
-        }
+        m_tetromino.move(0, -1);
     }
+
     uint32_t nLines = m_playfield.clearLines();
     if (nLines == 0) return;
-
-    if (m_fallTimer.getDuration() >= nLines)
-        m_fallTimer.setDuration(m_fallTimer.getDuration() - 10*nLines);
 
     uint32_t score = 100;
     for (uint32_t i = 1; i < nLines; i++)
         score *= 2;
     if (nLines == 4) score += 1000;
+
+    if (m_fallTimer.getDuration() >= score/10)
+        m_fallTimer.setDuration(m_fallTimer.getDuration() - score/10);
 
     m_score += score;
 }
@@ -195,6 +202,9 @@ void Tetris::nextTetromino() {
     m_nextTetromino.setOffset(
         (m_nextField.width() - m_nextTetromino.width()) / 2,
         (m_nextField.height() - m_nextTetromino.height()) / 2);
+
+    // update game state
+    if(!canPlace(m_tetromino)) m_state = GameOver;
 }
 
 Tetromino Tetris::dropTetromino(const Tetromino& tetromino) const {

@@ -51,6 +51,7 @@ private:
     std::array<Tetromino, 7> m_availableTetrominos;
 
     Timer m_fallTimer;
+    Timer m_placeTimer;
 
     GameState m_state;
     uint32_t m_score;
