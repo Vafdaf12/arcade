@@ -23,6 +23,7 @@ public:
     void draw(Screen& screen, const Playfield& field) const;
 
     inline const Color& getColor() const { return m_color; }
+    inline void setColor(const Color& color) { m_color = color; }
 
     inline void move(int x, int y) { m_offset += {x, y}; }
     inline void setOffset(int x, int y) { m_offset = {x, y}; }
