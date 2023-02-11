@@ -6,7 +6,7 @@ include(FetchContent)
 
 set(NAME_EXE Arcade)
 
-set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
+set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
 # ------------ FETCH SDL2 ------------ 
 FetchContent_Declare(SDL2 
