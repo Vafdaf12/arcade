@@ -171,6 +171,9 @@ void Tetris::update(uint32_t dt) {
     uint32_t nLines = m_playfield.clearLines();
     if (nLines == 0) return;
 
+    if (m_fallTimer.getDuration() >= nLines)
+        m_fallTimer.setDuration(m_fallTimer.getDuration() - 10*nLines);
+
     uint32_t score = 100;
     for (uint32_t i = 1; i < nLines; i++)
         score *= 2;
