@@ -8,6 +8,8 @@
 
 class ScreenBuffer;
 
+class BMPImage;
+
 class Renderer {
 public:
     virtual void clear(const Color& color = Color::BLACK) = 0;
@@ -17,4 +19,6 @@ public:
 
     virtual void drawPolygon(const std::vector<Vector2>& points, const Color& color) = 0;
     virtual void fillPolygon(const std::vector<Vector2>& points, const Color& color) = 0;
+
+    virtual void drawImage(const BMPImage& image, const Vector2& pos) = 0;
 };

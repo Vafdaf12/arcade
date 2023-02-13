@@ -1,6 +1,8 @@
 #include "SoftwareRenderer.h"
 
 #include "graphics/ScreenBuffer.h"
+#include "graphics/BMPImage.h"
+
 #include <algorithm>
 
 SoftwareRenderer::SoftwareRenderer() : m_pBuffer(nullptr) {}
@@ -129,5 +131,14 @@ void SoftwareRenderer::fillPolygon(
                 m_pBuffer->setPixel(color, x, y);
             }
         }
+    }
+}
+void SoftwareRenderer::drawImage(const BMPImage& image, const Vector2& pos) {
+    const std::vector<Color>& pixels = image.getPixels();
+    for(size_t i = 0; i < pixels.size(); i++) {
+        uint32_t x = i % image.width();
+        uint32_t y = i / image.width();
+
+        m_pBuffer->setPixel(pixels[i], pos.x + x, pos.y + y);
     }
 }

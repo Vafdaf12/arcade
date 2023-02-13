@@ -2,6 +2,7 @@
 
 #include "./Renderer.h"
 
+
 class SoftwareRenderer : public Renderer {
 public:
     SoftwareRenderer();
@@ -14,6 +15,8 @@ public:
 
     void drawPolygon(const std::vector<Vector2>& points, const Color& color) override;
     void fillPolygon(const std::vector<Vector2>& points, const Color& color) override;
+
+    void drawImage(const BMPImage& image, const Vector2& pos);
 
 private:
     ScreenBuffer* m_pBuffer;

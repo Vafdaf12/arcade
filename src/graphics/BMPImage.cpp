@@ -2,9 +2,11 @@
 #include "SDL_surface.h"
 
 #include <SDL.h>
+#include <iostream>
 
 BMPImage::BMPImage() : m_width(0), m_height(0) {}
 bool BMPImage::loadFromFile(const std::string& path) {
+    std::cout << "opening " << path << std::endl;
     SDL_Surface* pImageSurface = SDL_LoadBMP(path.c_str());
 
     if(!pImageSurface) return false;

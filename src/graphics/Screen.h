@@ -9,6 +9,7 @@
 
 class Vector2;
 class Line2D;
+class BMPImage;
 
 struct SDL_Window;
 struct SDL_Surface;
@@ -38,6 +39,7 @@ public:
         const Color& color,
         bool fill = false,
         const Color& fillColor = Color::WHITE);
+    void draw(const BMPImage& image, const Vector2& pos);
 
 private:
     Screen(const Screen&) = delete;
