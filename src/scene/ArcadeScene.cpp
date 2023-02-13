@@ -51,7 +51,7 @@ const std::string& ArcadeScene::getName() const {
 void ArcadeScene::update(uint32_t dt) {}
 void ArcadeScene::draw(Screen& screen) {
     BMPImage image;
-    assert(image.loadFromFile(App::Singleton().getBasePath() + "../assets/smiley.bmp"));
+    image.loadFromFile(App::Singleton().getBasePath() + "../assets/smiley.bmp");
     Line2D line({0, 0},
         {static_cast<float>(screen.width()),
             static_cast<float>(screen.height())});

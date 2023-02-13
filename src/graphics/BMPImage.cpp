@@ -3,14 +3,14 @@
 
 #include <SDL.h>
 #include <iostream>
+#include <stdexcept>
 
 BMPImage::BMPImage() : m_width(0), m_height(0) {}
-bool BMPImage::loadFromFile(const std::string& path) {
-    std::cout << "opening " << path << std::endl;
-    SDL_Surface* pImageSurface = SDL_LoadBMP(path.c_str());
 
-    if(!pImageSurface) return false;
-    if(!pImageSurface->pixels) return false;
+void BMPImage::loadFromFile(const std::string& path) {
+    SDL_Surface* pImageSurface = SDL_LoadBMP(path.c_str());
+    if (!pImageSurface)
+        throw std::runtime_error("failed to open bitmap: " + path);
 
     m_width = pImageSurface->w;
     m_height = pImageSurface->h;
@@ -20,13 +20,11 @@ bool BMPImage::loadFromFile(const std::string& path) {
 
     SDL_LockSurface(pImageSurface);
 
-    
     uint32_t* pPixels = static_cast<uint32_t*>(pImageSurface->pixels);
-    for(size_t i = 0; i < length; i++) {
+    for (size_t i = 0; i < length; i++) {
         m_pixels.push_back(Color(pPixels[i], pImageSurface->format));
     }
 
     SDL_UnlockSurface(pImageSurface);
     SDL_FreeSurface(pImageSurface);
-    return true;
 }

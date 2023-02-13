@@ -8,7 +8,7 @@
 class BMPImage {
 public:
     BMPImage();
-    bool loadFromFile(const std::string& path);
+    void loadFromFile(const std::string& path);
 
     inline const std::vector<Color>& getPixels() const { return m_pixels; }
 
