@@ -39,6 +39,8 @@ public:
         const Color& color,
         bool fill = false,
         const Color& fillColor = Color::WHITE);
+
+    void draw(const BMPImage& image, const Sprite& sprite, const Vector2& pos);
     void draw(const BMPImage& image, const Vector2& pos);
 
 private:

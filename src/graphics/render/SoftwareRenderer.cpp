@@ -1,7 +1,8 @@
 #include "SoftwareRenderer.h"
 
-#include "graphics/ScreenBuffer.h"
 #include "graphics/BMPImage.h"
+#include "graphics/ScreenBuffer.h"
+#include "graphics/SpriteSheet.h"
 
 #include <algorithm>
 
@@ -135,9 +136,28 @@ void SoftwareRenderer::fillPolygon(
 }
 void SoftwareRenderer::drawImage(const BMPImage& image, const Vector2& pos) {
     const std::vector<Color>& pixels = image.getPixels();
-    for(size_t i = 0; i < pixels.size(); i++) {
+    for (size_t i = 0; i < pixels.size(); i++) {
         uint32_t x = i % image.width();
         uint32_t y = i / image.width();
+
+        m_pBuffer->setPixel(pixels[i], pos.x + x, pos.y + y);
+    }
+}
+
+void SoftwareRenderer::drawSprite(const BMPImage& image, const Sprite& sprite, const Vector2& pos) {
+    const std::vector<Color>& pixels = image.getPixels();
+    for (size_t i = 0; i < pixels.size(); i++) {
+        uint32_t x = i % image.width();
+        uint32_t y = i / image.width();
+
+        if(x < sprite.x) continue;
+        if(y < sprite.y) continue;
+
+        x -= sprite.x;
+        y -= sprite.y;
+
+        if(x >= sprite.width) continue;
+        if(y >= sprite.height) continue;
 
         m_pBuffer->setPixel(pixels[i], pos.x + x, pos.y + y);
     }

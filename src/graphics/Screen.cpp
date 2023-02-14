@@ -1,7 +1,7 @@
 #include "Screen.h"
+#include "./BMPImage.h"
 #include "shapes/Line2D.h"
 #include "util/Vector2.h"
-#include "./BMPImage.h"
 
 #include <SDL.h>
 #include <algorithm>
@@ -74,6 +74,10 @@ void Screen::draw(
     m_renderer.drawPolygon(shape.getPoints(), color);
 }
 
+void Screen::draw(
+    const BMPImage& image, const Sprite& sprite, const Vector2& pos) {
+    m_renderer.drawSprite(image, sprite, pos);
+}
 void Screen::draw(const BMPImage& image, const Vector2& pos) {
     m_renderer.drawImage(image, pos);
 }

@@ -9,6 +9,7 @@
 class ScreenBuffer;
 
 class BMPImage;
+class Sprite;
 
 class Renderer {
 public:
@@ -21,4 +22,5 @@ public:
     virtual void fillPolygon(const std::vector<Vector2>& points, const Color& color) = 0;
 
     virtual void drawImage(const BMPImage& image, const Vector2& pos) = 0;
+    virtual void drawSprite(const BMPImage& sheet, const Sprite& sprite, const Vector2& pos) = 0;
 };

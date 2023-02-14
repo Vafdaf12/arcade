@@ -6,8 +6,8 @@
 #include "shapes/Line2D.h"
 #include "shapes/Triangle.h"
 
-#include "graphics/Screen.h"
 #include "graphics/BMPImage.h"
+#include "graphics/Screen.h"
 #include "input/GameController.h"
 #include "input/InputAction.h"
 
@@ -42,6 +42,10 @@ void ArcadeScene::init() {
 
     m_controller.addAction(action);
     m_controller.addMouseInputAction(mouseAction);
+
+    std::string basePath = App::Singleton().getBasePath() + "../assets/";
+    m_spriteSheet.loadFromFile(basePath + "ArcadeFont.txt");
+    m_image.loadFromFile(basePath + "ArcadeFont.bmp");
 }
 const std::string& ArcadeScene::getName() const {
     static std::string name = "Arcade Scene";
@@ -50,8 +54,7 @@ const std::string& ArcadeScene::getName() const {
 
 void ArcadeScene::update(uint32_t dt) {}
 void ArcadeScene::draw(Screen& screen) {
-    BMPImage image;
-    image.loadFromFile(App::Singleton().getBasePath() + "../assets/smiley.bmp");
+
     Line2D line({0, 0},
         {static_cast<float>(screen.width()),
             static_cast<float>(screen.height())});
@@ -68,7 +71,7 @@ void ArcadeScene::draw(Screen& screen) {
     screen.draw(triangle, Color::CYAN);
     screen.draw(rect, Color::RED);
     screen.draw(circle, Color::CYAN, true, color);
-    screen.draw(image, Vector2::ZERO);
+    screen.draw(m_image, m_spriteSheet["W"], {20, 0});
 }
 
 std::unique_ptr<Scene> ArcadeScene::getScene(ArcadeGame game) {
