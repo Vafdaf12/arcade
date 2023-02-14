@@ -70,7 +70,11 @@ void ArcadeScene::draw(Screen& screen) {
 
     App& app = App::Singleton();
 
-    screen.draw(getName(), app.getFont(), AARectangle(Vector2::ZERO, app.width(), app.height()), BitmapFont::CenterAlign | BitmapFont::MiddleAlign);
+    screen.draw(getName(),
+        app.getFont(),
+        AARectangle(Vector2::ZERO, app.width(), app.height()),
+        BitmapFont::CenterAlign | BitmapFont::MiddleAlign,
+        Color::RED);
 }
 
 std::unique_ptr<Scene> ArcadeScene::getScene(ArcadeGame game) {

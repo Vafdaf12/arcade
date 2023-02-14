@@ -16,13 +16,14 @@ public:
     void drawPolygon(const std::vector<Vector2>& points, const Color& color) override;
     void fillPolygon(const std::vector<Vector2>& points, const Color& color) override;
 
-    void drawImage(const BMPImage& image, const Vector2& pos) override;
-    void drawSprite(const BMPImage& sheet, const Sprite& sprite, const Vector2& pos) override;
+    void drawImage(const BMPImage& image, const Vector2& pos, const Color& tint = Color::WHITE) override;
+    void drawSprite(const BMPImage& sheet, const Sprite& sprite, const Vector2& pos, const Color& tint = Color::WHITE) override;
     void drawText(
             const std::string& text,
             const BitmapFont& font, 
             const AARectangle& boundingBox,
-            BitmapFont::FontAlignment alignment = BitmapFont::TopAlign | BitmapFont::LeftAlign
+            BitmapFont::FontAlignment alignment = BitmapFont::TopAlign | BitmapFont::LeftAlign,
+            const Color& tint = Color::WHITE
     ) override;
 
 private:
