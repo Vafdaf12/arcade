@@ -162,3 +162,22 @@ void SoftwareRenderer::drawSprite(const BMPImage& image, const Sprite& sprite, c
         m_pBuffer->setPixel(pixels[i], pos.x + x, pos.y + y);
     }
 }
+void SoftwareRenderer::drawText(
+        const std::string& text,
+        const BitmapFont& font, 
+        const AARectangle& boundingBox,
+        BitmapFont::FontAlignment alignment
+        ) {
+    Vector2 start = font.getDrawPosition(text, boundingBox, alignment);
+    for(char c : text) {
+        if(c == ' ') {
+            start.x += font.getWordSpacing();
+            continue;
+        }
+        Sprite sprite = font.getSpriteSheet()[std::string(1, c)];
+
+        drawSprite(font.getFontImage(), sprite, start);
+
+        start.x += sprite.width + font.getLetterSpacing();
+    }
+}

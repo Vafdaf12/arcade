@@ -27,9 +27,11 @@ public:
     Scene* topScene();
 
     static const std::string& getBasePath();
+    inline const BitmapFont& getFont() const { return m_font; }
 
 private:
     Screen m_screen;
+    BitmapFont m_font;
     SDL_Window* m_pWindow;
 
     std::vector<std::unique_ptr<Scene>> m_sceneStack;

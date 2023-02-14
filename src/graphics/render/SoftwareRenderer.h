@@ -18,6 +18,12 @@ public:
 
     void drawImage(const BMPImage& image, const Vector2& pos) override;
     void drawSprite(const BMPImage& sheet, const Sprite& sprite, const Vector2& pos) override;
+    void drawText(
+            const std::string& text,
+            const BitmapFont& font, 
+            const AARectangle& boundingBox,
+            BitmapFont::FontAlignment alignment = BitmapFont::TopAlign | BitmapFont::LeftAlign
+    ) override;
 
 private:
     ScreenBuffer* m_pBuffer;

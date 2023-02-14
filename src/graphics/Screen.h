@@ -42,6 +42,12 @@ public:
 
     void draw(const BMPImage& image, const Sprite& sprite, const Vector2& pos);
     void draw(const BMPImage& image, const Vector2& pos);
+    void draw(
+            const std::string& text,
+            const BitmapFont& font, 
+            const AARectangle& boundingBox,
+            BitmapFont::FontAlignment alignment = BitmapFont::TopAlign | BitmapFont::LeftAlign
+    ) ;
 
 private:
     Screen(const Screen&) = delete;

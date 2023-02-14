@@ -81,3 +81,10 @@ void Screen::draw(
 void Screen::draw(const BMPImage& image, const Vector2& pos) {
     m_renderer.drawImage(image, pos);
 }
+void Screen::draw(const std::string& text,
+    const BitmapFont& font,
+    const AARectangle& boundingBox,
+    BitmapFont::FontAlignment alignment) {
+
+    m_renderer.drawText(text, font, boundingBox, alignment);
+}

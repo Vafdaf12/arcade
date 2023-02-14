@@ -1,7 +1,6 @@
 #pragma once
 
 #include "./Scene.h"
-#include "graphics/SpriteSheet.h"
 
 #include <memory>
 
@@ -19,8 +18,6 @@ public:
     virtual void update(uint32_t dt) override;
     virtual void draw(Screen& screen) override;
 private:
-    BMPImage m_image;
-    SpriteSheet m_spriteSheet;
 
     std::unique_ptr<Scene> getScene(ArcadeGame game);
 };
