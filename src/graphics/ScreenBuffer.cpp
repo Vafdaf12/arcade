@@ -32,7 +32,7 @@ ScreenBuffer& ScreenBuffer::operator=(const ScreenBuffer& buf) {
             buf.m_pSurface->w,
             buf.m_pSurface->h,
             0,
-            m_pSurface->format->format);
+            buf.m_pSurface->format->format);
         SDL_BlitSurface(buf.m_pSurface, nullptr, m_pSurface, nullptr);
     }
 
