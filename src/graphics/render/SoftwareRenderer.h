@@ -15,6 +15,7 @@ public:
 
     void drawPolygon(const std::vector<Vector2>& points, const Color& color) override;
     void fillPolygon(const std::vector<Vector2>& points, const Color& color) override;
+    void fillPolygon(const std::vector<Vector2>& points, PolyFillFunc fillFunc) override;
 
     void drawImage(const BMPImage& image, const Vector2& pos, const Color& tint = Color::WHITE) override;
     void drawSprite(const BMPImage& sheet, const Sprite& sprite, const Vector2& pos, const Color& tint = Color::WHITE) override;

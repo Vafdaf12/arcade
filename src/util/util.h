@@ -13,3 +13,10 @@ bool stringCompare(const std::string& a, const std::string& b);
 struct Size {
     unsigned int width, height;
 };
+
+template<typename T>
+T clamp(const T& val, const T& min, const T& max) {
+    if(val > max) return max;
+    if(val < min) return min;
+    return val;
+}

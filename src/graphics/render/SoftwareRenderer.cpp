@@ -3,8 +3,10 @@
 #include "graphics/BMPImage.h"
 #include "graphics/ScreenBuffer.h"
 #include "graphics/SpriteSheet.h"
+#include "util/util.h"
 
 #include <algorithm>
+#include <cmath>
 
 SoftwareRenderer::SoftwareRenderer() : m_pBuffer(nullptr) {}
 SoftwareRenderer::SoftwareRenderer(ScreenBuffer* pBuffer) : m_pBuffer(pBuffer) {
@@ -86,6 +88,11 @@ void SoftwareRenderer::drawPolygon(
 
 void SoftwareRenderer::fillPolygon(
     const std::vector<Vector2>& points, const Color& color) {
+    fillPolygon(points, [&](uint32_t, uint32_t) { return color; });
+}
+
+void SoftwareRenderer::fillPolygon(
+    const std::vector<Vector2>& points, PolyFillFunc fillFunc) {
     if (points.size() == 0) return;
 
     float top = points[0].y;
@@ -129,12 +136,14 @@ void SoftwareRenderer::fillPolygon(
             int x2 = std::ceil(intersections[i + 1]);
 
             for (int x = x1; x < x2; x++) {
-                m_pBuffer->setPixel(color, x, y);
+                m_pBuffer->setPixel(fillFunc(x, y), x, y);
             }
         }
     }
 }
-void SoftwareRenderer::drawImage(const BMPImage& image, const Vector2& pos, const Color& tint) {
+
+void SoftwareRenderer::drawImage(
+    const BMPImage& image, const Vector2& pos, const Color& tint) {
     const std::vector<Color>& pixels = image.getPixels();
     for (size_t i = 0; i < pixels.size(); i++) {
         uint32_t x = i % image.width();
@@ -151,20 +160,41 @@ void SoftwareRenderer::drawImage(const BMPImage& image, const Vector2& pos, cons
     }
 }
 
-void SoftwareRenderer::drawSprite(const BMPImage& image, const Sprite& sprite, const Vector2& pos, const Color& tint) {
+void SoftwareRenderer::drawSprite(const BMPImage& image,
+    const Sprite& sprite,
+    const Vector2& pos,
+    const Color& tint) {
     const std::vector<Color>& pixels = image.getPixels();
-    for (size_t i = 0; i < pixels.size(); i++) {
-        uint32_t x = i % image.width();
-        uint32_t y = i / image.width();
 
-        if(x < sprite.x) continue;
-        if(y < sprite.y) continue;
+    Vector2 topLeft = pos;
+    Vector2 topRight = pos + Vector2(sprite.width, 0);
+    Vector2 bottomLeft = pos + Vector2(0, sprite.height);
+    Vector2 bottomRight = pos + Vector2(sprite.width, sprite.height);
 
-        x -= sprite.x;
-        y -= sprite.y;
+    std::vector<Vector2> points = {topLeft, bottomLeft, bottomRight, topRight};
 
-        if(x >= sprite.width) continue;
-        if(y >= sprite.height) continue;
+    Vector2 axisX = topRight - topLeft;
+    Vector2 axisY = bottomLeft - topLeft;
+
+    float invXAxisLengthSq = 1.0f / axisX.sqrMagnitude();
+    float invYAxisLengthSq = 1.0f / axisY.sqrMagnitude();
+
+    fillPolygon(points, [&](uint32_t x, uint32_t y) {
+        Vector2 relPoint = Vector2(x, y) - topLeft;
+
+        // The calculation here is equivalent to
+        // relPoint.projectOnto(axisX) / axisX.magnitude()
+        // but avoids unnecesary computation by using sqrMagnitude
+        float u = relPoint.dot(axisX) * invXAxisLengthSq;
+        float v = relPoint.dot(axisY) * invYAxisLengthSq;
+
+        u = clamp(u, 0.0f, 1.0f);
+        v = clamp(v, 0.0f, 1.0f);
+
+        int tx = std::roundf(u * static_cast<float>(sprite.width)) + sprite.x;
+        int ty = std::roundf(v * static_cast<float>(sprite.height)) + sprite.y;
+
+        size_t i = image.index(tx, ty);
 
         Color col = pixels[i];
 
@@ -172,20 +202,17 @@ void SoftwareRenderer::drawSprite(const BMPImage& image, const Sprite& sprite, c
         col.green *= static_cast<float>(tint.green) / 255.0f;
         col.blue *= static_cast<float>(tint.blue) / 255.0f;
         col.alpha *= static_cast<float>(tint.alpha) / 255.0f;
-
-        m_pBuffer->setPixel(col, pos.x + x, pos.y + y);
-    }
+        return col;
+    });
 }
-void SoftwareRenderer::drawText(
-        const std::string& text,
-        const BitmapFont& font, 
-        const AARectangle& boundingBox,
-        BitmapFont::FontAlignment alignment,
-        const Color& tint
-        ) {
+void SoftwareRenderer::drawText(const std::string& text,
+    const BitmapFont& font,
+    const AARectangle& boundingBox,
+    BitmapFont::FontAlignment alignment,
+    const Color& tint) {
     Vector2 start = font.getDrawPosition(text, boundingBox, alignment);
-    for(char c : text) {
-        if(c == ' ') {
+    for (char c : text) {
+        if (c == ' ') {
             start.x += font.getWordSpacing();
             continue;
         }
