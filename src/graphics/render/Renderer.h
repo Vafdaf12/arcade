@@ -19,6 +19,7 @@ public:
     using PolyFillFunc = std::function<Color(uint32_t x, uint32_t y)>;
 
     virtual void clear(const Color& color = Color::BLACK) = 0;
+    virtual void present() = 0;
 
     virtual void drawPoint(const Vector2& point, const Color& color) = 0;
     virtual void drawLine(const Vector2& p0, const Vector2& p1, const Color& color) = 0;

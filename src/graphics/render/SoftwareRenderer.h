@@ -1,13 +1,17 @@
 #pragma once
 
 #include "./Renderer.h"
+#include "graphics/ScreenBuffer.h"
 
+struct SDL_Window;
+struct SDL_Surface;
 
 class SoftwareRenderer : public Renderer {
 public:
-    SoftwareRenderer();
-    SoftwareRenderer(ScreenBuffer* pBuffer);
+    SoftwareRenderer() = default;
+    SoftwareRenderer(SDL_Window* pWindow, uint32_t w, uint32_t h);
 
+    void present() override;
     void clear(const Color& color = Color::BLACK) override;
 
     void drawPoint(const Vector2& point, const Color& color) override;
@@ -28,5 +32,7 @@ public:
     ) override;
 
 private:
-    ScreenBuffer* m_pBuffer;
+    SDL_Window* m_pWindow;
+    SDL_Surface* m_pWindowSurface;
+    ScreenBuffer m_buffer;
 };

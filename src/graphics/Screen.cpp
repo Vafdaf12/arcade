@@ -10,7 +10,7 @@
 #include <vector>
 
 Screen::Screen()
-    : m_width(0), m_height(0), m_pWindow(nullptr), m_pSurface(nullptr) {}
+    : m_width(0), m_height(0), m_pWindow(nullptr) {}
 
 Screen::~Screen() {
     if (m_pWindow) SDL_DestroyWindow(m_pWindow);
@@ -33,14 +33,9 @@ SDL_Window* Screen::init(uint32_t w, uint32_t h, uint32_t mag) {
         0);
 
     if (m_pWindow) {
-        m_pSurface = SDL_GetWindowSurface(m_pWindow);
-        SDL_PixelFormat* pPixelFormat = m_pSurface->format;
-
         m_clearColor = Color::BLACK;
 
-        m_backBuffer.init(pPixelFormat->format, m_width, m_height);
-
-        m_renderer = SoftwareRenderer(&m_backBuffer);
+        m_renderer = SoftwareRenderer(m_pWindow, w, h);
         m_renderer.clear(m_clearColor);
     }
     return m_pWindow;
@@ -49,12 +44,7 @@ SDL_Window* Screen::init(uint32_t w, uint32_t h, uint32_t mag) {
 void Screen::swapBuffers() {
     assert(m_pWindow);
 
-    SDL_FillRect(
-        m_pSurface, nullptr, m_clearColor.mapToFormat(m_pSurface->format));
-
-    SDL_BlitScaled(m_backBuffer.getSurface(), nullptr, m_pSurface, nullptr);
-    SDL_UpdateWindowSurface(m_pWindow);
-
+    m_renderer.present();
     m_renderer.clear(m_clearColor);
 }
 

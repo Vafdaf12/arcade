@@ -57,9 +57,7 @@ private:
     uint32_t m_width, m_height;
 
     SDL_Window* m_pWindow;
-    SDL_Surface* m_pSurface;
 
-    ScreenBuffer m_backBuffer;
     Color m_clearColor;
     SoftwareRenderer m_renderer;
 };

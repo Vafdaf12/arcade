@@ -1,5 +1,6 @@
 #include "SoftwareRenderer.h"
 
+#include "SDL_video.h"
 #include "graphics/BMPImage.h"
 #include "graphics/ScreenBuffer.h"
 #include "graphics/SpriteSheet.h"
@@ -8,24 +9,35 @@
 #include <algorithm>
 #include <cmath>
 
-SoftwareRenderer::SoftwareRenderer() : m_pBuffer(nullptr) {}
-SoftwareRenderer::SoftwareRenderer(ScreenBuffer* pBuffer) : m_pBuffer(pBuffer) {
-    assert(m_pBuffer);
+#include <SDL.h>
+
+SoftwareRenderer::SoftwareRenderer(SDL_Window* pWindow, uint32_t w, uint32_t h) {
+    assert(pWindow);
+    m_pWindow = pWindow;
+    m_buffer.init(SDL_GetWindowPixelFormat(pWindow), w, h);
+
+    m_pWindowSurface = SDL_GetWindowSurface(m_pWindow);
+    if(!m_pWindowSurface) throw SDL_EXCEPT("SoftwareRenderer(): ");
 }
 
+
+void SoftwareRenderer::present() {
+    SDL_BlitScaled(m_buffer.getSurface(), nullptr, m_pWindowSurface, nullptr);
+    SDL_UpdateWindowSurface(m_pWindow);
+}
 void SoftwareRenderer::clear(const Color& color) {
-    assert(m_pBuffer);
-    m_pBuffer->clear(color);
+    assert(m_buffer);
+    m_buffer.clear(color);
 }
 
 void SoftwareRenderer::drawPoint(const Vector2& point, const Color& color) {
-    assert(m_pBuffer);
-    m_pBuffer->setPixel(
+    assert(m_buffer);
+    m_buffer.setPixel(
         color, static_cast<int>(point.x), static_cast<int>(point.y));
 }
 void SoftwareRenderer::drawLine(
     const Vector2& p0, const Vector2& p1, const Color& color) {
-    assert(m_pBuffer);
+    assert(m_buffer);
 
     int dx, dy;
 
@@ -44,7 +56,7 @@ void SoftwareRenderer::drawLine(
     dx = std::abs(dx);
     dy = std::abs(dy);
 
-    m_pBuffer->setPixel(color, x0, y0);
+    m_buffer.setPixel(color, x0, y0);
     if (dx >= dy) {
         int p = 2 * dy - dx;
 
@@ -56,7 +68,7 @@ void SoftwareRenderer::drawLine(
             p += 2 * dy;
             x0 += ix;
 
-            m_pBuffer->setPixel(color, x0, y0);
+            m_buffer.setPixel(color, x0, y0);
         }
     } else {
         int p = 2 * dx - dy;
@@ -69,14 +81,14 @@ void SoftwareRenderer::drawLine(
             p += 2 * dx;
             y0 += iy;
 
-            m_pBuffer->setPixel(color, x0, y0);
+            m_buffer.setPixel(color, x0, y0);
         }
     }
 }
 
 void SoftwareRenderer::drawPolygon(
     const std::vector<Vector2>& points, const Color& color) {
-    assert(m_pBuffer);
+    assert(m_buffer);
     Vector2 p0 = points.back();
 
     for (size_t i = 0; i < points.size(); i++) {
@@ -136,7 +148,7 @@ void SoftwareRenderer::fillPolygon(
             int x2 = std::ceil(intersections[i + 1]);
 
             for (int x = x1; x < x2; x++) {
-                m_pBuffer->setPixel(fillFunc(x, y), x, y);
+                m_buffer.setPixel(fillFunc(x, y), x, y);
             }
         }
     }
@@ -156,7 +168,7 @@ void SoftwareRenderer::drawImage(
         col.blue *= static_cast<float>(tint.blue) / 255.0f;
         col.alpha *= static_cast<float>(tint.alpha) / 255.0f;
 
-        m_pBuffer->setPixel(col, pos.x + x, pos.y + y);
+        m_buffer.setPixel(col, pos.x + x, pos.y + y);
     }
 }
 
