@@ -23,15 +23,18 @@ App& App::Singleton() {
 bool App::init(uint32_t width, uint32_t height, uint32_t mag) {
     m_pWindow = m_screen.init(width, height, mag);
 
+    std::string basePath =getBasePath() + "../assets/";
+    m_font.loadFromFile(basePath + "ArcadeFont.bmp", basePath + "ArcadeFont.txt");
+
     auto arcade = std::make_unique<ArcadeScene>();
     pushScene(std::move(arcade));
 
     // TEMP
-    {
+    /*{
         auto breakout = std::make_unique<Tetris>();
         auto breakoutScene = std::make_unique<GameScene>(std::move(breakout));
         pushScene(std::move(breakoutScene));
-    }
+    }*/
 
     return m_pWindow;
 }

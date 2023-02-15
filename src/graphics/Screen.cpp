@@ -1,4 +1,5 @@
 #include "Screen.h"
+#include "./BMPImage.h"
 #include "shapes/Line2D.h"
 #include "util/Vector2.h"
 
@@ -71,4 +72,19 @@ void Screen::draw(
     const Shape& shape, const Color& color, bool fill, const Color& fillColor) {
     if (fill) m_renderer.fillPolygon(shape.getPoints(), fillColor);
     m_renderer.drawPolygon(shape.getPoints(), color);
+}
+
+void Screen::draw(
+    const BMPImage& image, const Sprite& sprite, const Vector2& pos, const Color& tint) {
+    m_renderer.drawSprite(image, sprite, pos, tint);
+}
+void Screen::draw(const BMPImage& image, const Vector2& pos, const Color& tint ) {
+    m_renderer.drawImage(image, pos, tint);
+}
+void Screen::draw(const std::string& text,
+    const BitmapFont& font,
+    const AARectangle& boundingBox,
+    BitmapFont::FontAlignment alignment, const Color& tint) {
+
+    m_renderer.drawText(text, font, boundingBox, alignment, tint);
 }

@@ -9,6 +9,7 @@
 
 class Vector2;
 class Line2D;
+class BMPImage;
 
 struct SDL_Window;
 struct SDL_Surface;
@@ -38,6 +39,16 @@ public:
         const Color& color,
         bool fill = false,
         const Color& fillColor = Color::WHITE);
+
+    void draw(const BMPImage& image, const Sprite& sprite, const Vector2& pos, const Color& tint = Color::WHITE);
+    void draw(const BMPImage& image, const Vector2& pos, const Color& tint = Color::WHITE);
+    void draw(
+            const std::string& text,
+            const BitmapFont& font, 
+            const AARectangle& boundingBox,
+            BitmapFont::FontAlignment alignment = BitmapFont::TopAlign | BitmapFont::LeftAlign,
+            const Color& tint = Color::WHITE
+    );
 
 private:
     Screen(const Screen&) = delete;

@@ -1,6 +1,9 @@
 #include "SoftwareRenderer.h"
 
+#include "graphics/BMPImage.h"
 #include "graphics/ScreenBuffer.h"
+#include "graphics/SpriteSheet.h"
+
 #include <algorithm>
 
 SoftwareRenderer::SoftwareRenderer() : m_pBuffer(nullptr) {}
@@ -129,5 +132,67 @@ void SoftwareRenderer::fillPolygon(
                 m_pBuffer->setPixel(color, x, y);
             }
         }
+    }
+}
+void SoftwareRenderer::drawImage(const BMPImage& image, const Vector2& pos, const Color& tint) {
+    const std::vector<Color>& pixels = image.getPixels();
+    for (size_t i = 0; i < pixels.size(); i++) {
+        uint32_t x = i % image.width();
+        uint32_t y = i / image.width();
+
+        Color col = pixels[i];
+
+        col.red *= static_cast<float>(tint.red) / 255.0f;
+        col.green *= static_cast<float>(tint.green) / 255.0f;
+        col.blue *= static_cast<float>(tint.blue) / 255.0f;
+        col.alpha *= static_cast<float>(tint.alpha) / 255.0f;
+
+        m_pBuffer->setPixel(col, pos.x + x, pos.y + y);
+    }
+}
+
+void SoftwareRenderer::drawSprite(const BMPImage& image, const Sprite& sprite, const Vector2& pos, const Color& tint) {
+    const std::vector<Color>& pixels = image.getPixels();
+    for (size_t i = 0; i < pixels.size(); i++) {
+        uint32_t x = i % image.width();
+        uint32_t y = i / image.width();
+
+        if(x < sprite.x) continue;
+        if(y < sprite.y) continue;
+
+        x -= sprite.x;
+        y -= sprite.y;
+
+        if(x >= sprite.width) continue;
+        if(y >= sprite.height) continue;
+
+        Color col = pixels[i];
+
+        col.red *= static_cast<float>(tint.red) / 255.0f;
+        col.green *= static_cast<float>(tint.green) / 255.0f;
+        col.blue *= static_cast<float>(tint.blue) / 255.0f;
+        col.alpha *= static_cast<float>(tint.alpha) / 255.0f;
+
+        m_pBuffer->setPixel(col, pos.x + x, pos.y + y);
+    }
+}
+void SoftwareRenderer::drawText(
+        const std::string& text,
+        const BitmapFont& font, 
+        const AARectangle& boundingBox,
+        BitmapFont::FontAlignment alignment,
+        const Color& tint
+        ) {
+    Vector2 start = font.getDrawPosition(text, boundingBox, alignment);
+    for(char c : text) {
+        if(c == ' ') {
+            start.x += font.getWordSpacing();
+            continue;
+        }
+        Sprite sprite = font.getSpriteSheet()[std::string(1, c)];
+
+        drawSprite(font.getFontImage(), sprite, start, tint);
+
+        start.x += sprite.width + font.getLetterSpacing();
     }
 }

@@ -1,10 +1,12 @@
 #include "ArcadeScene.h"
 
+#include "app/App.h"
 #include "shapes/AARectangle.h"
 #include "shapes/Circle.h"
 #include "shapes/Line2D.h"
 #include "shapes/Triangle.h"
 
+#include "graphics/BitmapFont.h"
 #include "graphics/Screen.h"
 #include "input/GameController.h"
 #include "input/InputAction.h"
@@ -48,6 +50,7 @@ const std::string& ArcadeScene::getName() const {
 
 void ArcadeScene::update(uint32_t dt) {}
 void ArcadeScene::draw(Screen& screen) {
+
     Line2D line({0, 0},
         {static_cast<float>(screen.width()),
             static_cast<float>(screen.height())});
@@ -64,6 +67,14 @@ void ArcadeScene::draw(Screen& screen) {
     screen.draw(triangle, Color::CYAN);
     screen.draw(rect, Color::RED);
     screen.draw(circle, Color::CYAN, true, color);
+
+    App& app = App::Singleton();
+
+    screen.draw(getName(),
+        app.getFont(),
+        AARectangle(Vector2::ZERO, app.width(), app.height()),
+        BitmapFont::CenterAlign | BitmapFont::MiddleAlign,
+        Color::RED);
 }
 
 std::unique_ptr<Scene> ArcadeScene::getScene(ArcadeGame game) {

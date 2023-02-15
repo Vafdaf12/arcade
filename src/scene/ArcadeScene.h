@@ -18,5 +18,6 @@ public:
     virtual void update(uint32_t dt) override;
     virtual void draw(Screen& screen) override;
 private:
+
     std::unique_ptr<Scene> getScene(ArcadeGame game);
 };
