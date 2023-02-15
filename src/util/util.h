@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <exception>
 
 #define EPSILON 1e-4
 
@@ -20,3 +21,6 @@ T clamp(const T& val, const T& min, const T& max) {
     if(val < min) return min;
     return val;
 }
+
+#define SDL_EXCEPT(prefix)                                                     \
+    std::runtime_error(prefix + std::string(SDL_GetError()))
