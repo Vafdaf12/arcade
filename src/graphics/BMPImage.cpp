@@ -2,6 +2,7 @@
 #include "SDL_surface.h"
 
 #include <SDL.h>
+#include <cassert>
 #include <iostream>
 #include <stdexcept>
 
@@ -27,4 +28,11 @@ void BMPImage::loadFromFile(const std::string& path) {
 
     SDL_UnlockSurface(pImageSurface);
     SDL_FreeSurface(pImageSurface);
+}
+size_t BMPImage::index(uint32_t x, uint32_t y) const {
+    assert(x < m_width);
+    assert(y < m_height);
+
+    return y * m_width + x;
+
 }

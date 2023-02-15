@@ -11,6 +11,7 @@ public:
     void loadFromFile(const std::string& path);
 
     inline const std::vector<Color>& getPixels() const { return m_pixels; }
+    size_t index(uint32_t width, uint32_t height) const;
 
     inline uint32_t width() const { return m_width; }
     inline uint32_t height() const { return m_height; }
