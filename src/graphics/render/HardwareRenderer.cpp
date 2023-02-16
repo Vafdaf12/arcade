@@ -13,6 +13,7 @@
 
 #include <SDL.h>
 #include <cstring>
+<<<<<<< HEAD
 
 HardwareRenderer::HardwareRenderer(SDL_Window* pWindow, uint32_t w, uint32_t h) {
     assert(pWindow);
@@ -43,15 +44,76 @@ void HardwareRenderer::present() {
 
     SDL_Surface* pSurface = m_buffer.getSurface();
     memcpy(pTextureData, pSurface->pixels, pSurface->w * pSurface->h * pSurface->format->BytesPerPixel);
+=======
+#include <type_traits>
+#include <utility>
+
+HardwareRenderer::HardwareRenderer()
+    : m_pWindow(nullptr), m_pRenderer(nullptr), m_pTexture(nullptr),
+      m_renderColor(Color::BLACK) {}
+
+HardwareRenderer::HardwareRenderer(
+    SDL_Window* pWindow, uint32_t w, uint32_t h) {
+    assert(pWindow);
+    m_pWindow = pWindow;
+    m_pRenderer = SDL_CreateRenderer(
+        m_pWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if (!m_pRenderer) throw SDL_EXCEPT("HarwareRenderer::CreateRenderer: ");
+
+    uint32_t format = SDL_GetWindowPixelFormat(m_pWindow);
+
+    m_pTexture = SDL_CreateTexture(
+        m_pRenderer, format, SDL_TEXTUREACCESS_STREAMING, w, h);
+    if (!m_pTexture) throw SDL_EXCEPT("HarwareRenderer::CreateTexture: ");
+
+    m_renderColor = Color::BLACK;
+    SDL_SetRenderDrawColor(m_pRenderer, 0, 0, 0, 255);
+    m_buffer.init(format, w, h);
+}
+HardwareRenderer& HardwareRenderer::operator=(HardwareRenderer&& other) {
+    std::swap(m_pRenderer, other.m_pRenderer);
+    std::swap(m_pTexture, other.m_pTexture);
+    std::swap(m_pWindow, other.m_pWindow);
+    m_buffer = other.m_buffer;
+    m_renderColor = other.m_renderColor;
+
+    return *this;
+}
+
+HardwareRenderer::~HardwareRenderer() {
+    if (m_pTexture) SDL_DestroyTexture(m_pTexture);
+    if (m_pRenderer) SDL_DestroyRenderer(m_pRenderer);
+}
+
+void HardwareRenderer::present() {
+
+    uint8_t* pTextureData = nullptr;
+    int texturePitch = 0;
+    if (SDL_LockTexture(
+            m_pTexture, nullptr, (void**)&pTextureData, &texturePitch))
+        throw SDL_EXCEPT("HardwareRenderer::LockTexture: ");
+
+    SDL_Surface* pSurface = m_buffer.getSurface();
+    memcpy(pTextureData,
+        pSurface->pixels,
+        pSurface->w * pSurface->h * pSurface->format->BytesPerPixel);
+>>>>>>> dd1c42a (feat: add hardware-accelerated renderer for better performance)
 
     SDL_UnlockTexture(m_pTexture);
     SDL_RenderCopy(m_pRenderer, m_pTexture, nullptr, nullptr);
     SDL_RenderPresent(m_pRenderer);
 }
 void HardwareRenderer::setRenderDrawColor(const Color& color) {
+<<<<<<< HEAD
     if(color == m_renderColor) return;
     m_renderColor = color;
     SDL_SetRenderDrawColor(m_pRenderer, color.red, color.green, color.blue, color.alpha);
+=======
+    if (color == m_renderColor) return;
+    m_renderColor = color;
+    SDL_SetRenderDrawColor(
+        m_pRenderer, color.red, color.green, color.blue, color.alpha);
+>>>>>>> dd1c42a (feat: add hardware-accelerated renderer for better performance)
 }
 void HardwareRenderer::clear(const Color& color) {
     setRenderDrawColor(color);

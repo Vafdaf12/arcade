@@ -10,9 +10,22 @@ struct SDL_Texture;
 
 class HardwareRenderer : public Renderer {
 public:
+<<<<<<< HEAD
     HardwareRenderer() = default;
     HardwareRenderer(SDL_Window* pWindow, uint32_t w, uint32_t h);
 
+=======
+    HardwareRenderer();
+    HardwareRenderer(SDL_Window* pWindow, uint32_t w, uint32_t h);
+
+    // move semantics
+    HardwareRenderer& operator=(HardwareRenderer&& other);
+
+    // disable copying of renderer
+    HardwareRenderer(const HardwareRenderer& other) = delete;
+    HardwareRenderer& operator=(const HardwareRenderer& other) = delete;
+
+>>>>>>> dd1c42a (feat: add hardware-accelerated renderer for better performance)
     ~HardwareRenderer();
 
     void present() override;
@@ -41,7 +54,10 @@ private:
     SDL_Renderer* m_pRenderer;
     SDL_Texture* m_pTexture;
     SDL_Window* m_pWindow;
+<<<<<<< HEAD
     SDL_PixelFormat* m_pFormat;
+=======
+>>>>>>> dd1c42a (feat: add hardware-accelerated renderer for better performance)
 
     ScreenBuffer m_buffer;
     Color m_renderColor;
