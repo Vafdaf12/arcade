@@ -18,6 +18,8 @@ class Renderer {
 public:
     using PolyFillFunc = std::function<Color(uint32_t x, uint32_t y)>;
 
+    virtual ~Renderer() {}
+
     virtual void clear(const Color& color = Color::BLACK) = 0;
     virtual void present() = 0;
 

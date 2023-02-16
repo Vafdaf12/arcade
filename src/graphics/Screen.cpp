@@ -35,7 +35,7 @@ SDL_Window* Screen::init(uint32_t w, uint32_t h, uint32_t mag) {
     if (m_pWindow) {
         m_clearColor = Color::BLACK;
 
-        m_renderer = SoftwareRenderer(m_pWindow, w, h);
+        m_renderer = HardwareRenderer(m_pWindow, w, h);
         m_renderer.clear(m_clearColor);
     }
     return m_pWindow;

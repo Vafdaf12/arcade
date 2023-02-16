@@ -2,7 +2,7 @@
 
 #include "Color.h"
 #include "ScreenBuffer.h"
-#include "graphics/render/SoftwareRenderer.h"
+#include "graphics/render/HardwareRenderer.h"
 #include "shapes/Shape.h"
 
 #include <stdint.h>
@@ -59,5 +59,5 @@ private:
     SDL_Window* m_pWindow;
 
     Color m_clearColor;
-    SoftwareRenderer m_renderer;
+    HardwareRenderer m_renderer;
 };
