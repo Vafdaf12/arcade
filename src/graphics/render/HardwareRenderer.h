@@ -10,11 +10,6 @@ struct SDL_Texture;
 
 class HardwareRenderer : public Renderer {
 public:
-<<<<<<< HEAD
-    HardwareRenderer() = default;
-    HardwareRenderer(SDL_Window* pWindow, uint32_t w, uint32_t h);
-
-=======
     HardwareRenderer();
     HardwareRenderer(SDL_Window* pWindow, uint32_t w, uint32_t h);
 
@@ -25,7 +20,6 @@ public:
     HardwareRenderer(const HardwareRenderer& other) = delete;
     HardwareRenderer& operator=(const HardwareRenderer& other) = delete;
 
->>>>>>> dd1c42a (feat: add hardware-accelerated renderer for better performance)
     ~HardwareRenderer();
 
     void present() override;
@@ -53,10 +47,6 @@ private:
 
     SDL_Renderer* m_pRenderer;
     SDL_Window* m_pWindow;
-<<<<<<< HEAD
-    SDL_PixelFormat* m_pFormat;
-=======
->>>>>>> dd1c42a (feat: add hardware-accelerated renderer for better performance)
 
     Color m_renderColor;
 };
