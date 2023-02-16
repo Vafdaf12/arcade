@@ -52,13 +52,11 @@ private:
     void setRenderDrawColor(const Color& color);
 
     SDL_Renderer* m_pRenderer;
-    SDL_Texture* m_pTexture;
     SDL_Window* m_pWindow;
 <<<<<<< HEAD
     SDL_PixelFormat* m_pFormat;
 =======
 >>>>>>> dd1c42a (feat: add hardware-accelerated renderer for better performance)
 
-    ScreenBuffer m_buffer;
     Color m_renderColor;
 };

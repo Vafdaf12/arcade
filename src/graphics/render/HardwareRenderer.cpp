@@ -49,43 +49,38 @@ void HardwareRenderer::present() {
 #include <utility>
 
 HardwareRenderer::HardwareRenderer()
-    : m_pWindow(nullptr), m_pRenderer(nullptr), m_pTexture(nullptr),
+    : m_pWindow(nullptr), m_pRenderer(nullptr), 
       m_renderColor(Color::BLACK) {}
 
 HardwareRenderer::HardwareRenderer(
     SDL_Window* pWindow, uint32_t w, uint32_t h) {
     assert(pWindow);
     m_pWindow = pWindow;
+
     m_pRenderer = SDL_CreateRenderer(
         m_pWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (!m_pRenderer) throw SDL_EXCEPT("HarwareRenderer::CreateRenderer: ");
 
-    uint32_t format = SDL_GetWindowPixelFormat(m_pWindow);
-
-    m_pTexture = SDL_CreateTexture(
-        m_pRenderer, format, SDL_TEXTUREACCESS_STREAMING, w, h);
-    if (!m_pTexture) throw SDL_EXCEPT("HarwareRenderer::CreateTexture: ");
+    SDL_RenderSetLogicalSize(m_pRenderer, w, h);
+    SDL_SetRenderDrawBlendMode(m_pRenderer, SDL_BLENDMODE_BLEND);
 
     m_renderColor = Color::BLACK;
     SDL_SetRenderDrawColor(m_pRenderer, 0, 0, 0, 255);
-    m_buffer.init(format, w, h);
 }
 HardwareRenderer& HardwareRenderer::operator=(HardwareRenderer&& other) {
     std::swap(m_pRenderer, other.m_pRenderer);
-    std::swap(m_pTexture, other.m_pTexture);
     std::swap(m_pWindow, other.m_pWindow);
-    m_buffer = other.m_buffer;
     m_renderColor = other.m_renderColor;
 
     return *this;
 }
 
 HardwareRenderer::~HardwareRenderer() {
-    if (m_pTexture) SDL_DestroyTexture(m_pTexture);
     if (m_pRenderer) SDL_DestroyRenderer(m_pRenderer);
 }
 
 void HardwareRenderer::present() {
+<<<<<<< HEAD
 
     uint8_t* pTextureData = nullptr;
     int texturePitch = 0;
@@ -101,8 +96,11 @@ void HardwareRenderer::present() {
 
     SDL_UnlockTexture(m_pTexture);
     SDL_RenderCopy(m_pRenderer, m_pTexture, nullptr, nullptr);
+=======
+>>>>>>> fcb2b12 (refactor(HardwareRenderer): remove need for seperate buffer)
     SDL_RenderPresent(m_pRenderer);
 }
+
 void HardwareRenderer::setRenderDrawColor(const Color& color) {
 <<<<<<< HEAD
     if(color == m_renderColor) return;
@@ -118,75 +116,40 @@ void HardwareRenderer::setRenderDrawColor(const Color& color) {
 void HardwareRenderer::clear(const Color& color) {
     setRenderDrawColor(color);
     SDL_RenderClear(m_pRenderer);
-    m_buffer.clear(color);
 }
 
 void HardwareRenderer::drawPoint(const Vector2& point, const Color& color) {
-    assert(m_buffer);
-    m_buffer.setPixel(
-        color, static_cast<int>(point.x), static_cast<int>(point.y));
+    assert(m_pRenderer);
+    setRenderDrawColor(color);
+
+    SDL_RenderDrawPointF(m_pRenderer, point.x, point.y);
 }
 void HardwareRenderer::drawLine(
     const Vector2& p0, const Vector2& p1, const Color& color) {
-    assert(m_buffer);
+    assert(m_pRenderer);
+    setRenderDrawColor(color);
 
-    int dx, dy;
-
-    int x0 = std::roundf(p0.x);
-    int y0 = std::roundf(p0.y);
-
-    int x1 = std::roundf(p1.x);
-    int y1 = std::roundf(p1.y);
-
-    dx = x1 - x0;
-    dy = y1 - y0;
-
-    const char ix((dx > 0) - (dx < 0));
-    const char iy((dy > 0) - (dy < 0));
-
-    dx = std::abs(dx);
-    dy = std::abs(dy);
-
-    m_buffer.setPixel(color, x0, y0);
-    if (dx >= dy) {
-        int p = 2 * dy - dx;
-
-        while (x0 != x1) {
-            if (p >= 0) {
-                y0 += iy;
-                p -= 2 * dx;
-            }
-            p += 2 * dy;
-            x0 += ix;
-
-            m_buffer.setPixel(color, x0, y0);
-        }
-    } else {
-        int p = 2 * dx - dy;
-
-        while (y0 != y1) {
-            if (p >= 0) {
-                x0 += ix;
-                p -= 2 * dy;
-            }
-            p += 2 * dx;
-            y0 += iy;
-
-            m_buffer.setPixel(color, x0, y0);
-        }
-    }
+    SDL_RenderDrawLineF(m_pRenderer, p0.x, p0.y, p1.x, p1.y);
 }
 
 void HardwareRenderer::drawPolygon(
     const std::vector<Vector2>& points, const Color& color) {
-    assert(m_buffer);
-    Vector2 p0 = points.back();
+    assert(m_pRenderer);
+    setRenderDrawColor(color);
 
-    for (size_t i = 0; i < points.size(); i++) {
-        Vector2 p1 = points[i];
-        drawLine(p0, p1, color);
-        p0 = p1;
-    }
+    std::vector<SDL_FPoint> drawPoints;
+    drawPoints.resize(points.size() + 1);
+
+    std::transform(
+        points.begin(), points.end(), drawPoints.begin(), [](const Vector2& p) {
+            SDL_FPoint point;
+            point.x = p.x;
+            point.y = p.y;
+            return point;
+        });
+
+    drawPoints.back() = drawPoints.front();
+    SDL_RenderDrawLinesF(m_pRenderer, drawPoints.data(), drawPoints.size());
 }
 
 void HardwareRenderer::fillPolygon(
@@ -196,6 +159,7 @@ void HardwareRenderer::fillPolygon(
 
 void HardwareRenderer::fillPolygon(
     const std::vector<Vector2>& points, PolyFillFunc fillFunc) {
+    assert(m_pRenderer);
     if (points.size() == 0) return;
 
     float top = points[0].y;
@@ -239,7 +203,8 @@ void HardwareRenderer::fillPolygon(
             int x2 = std::ceil(intersections[i + 1]);
 
             for (int x = x1; x < x2; x++) {
-                m_buffer.setPixel(fillFunc(x, y), x, y);
+                setRenderDrawColor(fillFunc(x, y));
+                SDL_RenderDrawPoint(m_pRenderer, x, y);
             }
         }
     }
@@ -247,6 +212,7 @@ void HardwareRenderer::fillPolygon(
 
 void HardwareRenderer::drawImage(
     const BMPImage& image, const Vector2& pos, const Color& tint) {
+    assert(m_pRenderer);
     const std::vector<Color>& pixels = image.getPixels();
     for (size_t i = 0; i < pixels.size(); i++) {
         uint32_t x = i % image.width();
@@ -259,7 +225,8 @@ void HardwareRenderer::drawImage(
         col.blue *= static_cast<float>(tint.blue) / 255.0f;
         col.alpha *= static_cast<float>(tint.alpha) / 255.0f;
 
-        m_buffer.setPixel(col, pos.x + x, pos.y + y);
+        setRenderDrawColor(col);
+        SDL_RenderDrawPointF(m_pRenderer, pos.x + x, pos.y + y);
     }
 }
 
